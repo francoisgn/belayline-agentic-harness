@@ -17,6 +17,14 @@ moving to this version.
   `judgment` lessons sorted by whether a script could enforce them (7 yes, 41 partly, 41 no), and the measured
   per-session load of the harness in Claude Code (~3,900 tokens, of which ~650 for compliance agents loaded even when
   not enabled), with proposals. No lesson changed. **Action**: none.
+- **CodeRabbit: one review per ready head** ([REVIEW-SERVICE](docs/REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project)
+  §5, #116): the sync seeds `.coderabbit.yaml` when it is missing (drafts not reviewed, no review per push, auto-pause
+  after 2 reviewed commits; keys quoted from CodeRabbit's reference read on 2026-11-15), never rewritten. New
+  `.harness/config.json` key `coderabbit.agent_requests_review` (default `false`): on, `/review-round` posts
+  `@coderabbitai review` itself, once per ready head the bot has not reviewed, never on a draft; off, it asks the
+  operator as before. Whether CodeRabbit reviews on draft to ready is still to verify (three-step test in §5).
+  **Action**: set `language` in the seeded `.coderabbit.yaml`; add `"coderabbit": { "agent_requests_review": true }`
+  where agents may post the request.
 - **CI budget, billing units** ([docs/CI-BUDGET.md](docs/CI-BUDGET.md) §1, #96): GitHub states the included usage in
   dollars and a price per minute by runner; the two rules (macOS about ten times Linux, every job rounded up) are
   unchanged. Sourced and dated.
@@ -38,6 +46,12 @@ moving to this version.
   the integration branch) and runs `queued` with zero jobs, from the Actions API with at most 3 + `max_job_requests`
   extra requests; "could not check" rather than "nothing" when the API fails. Thresholds in `.harness/config.json` ›
   `ci_health`. Playbook for a red base and a stuck run in [REVIEW-ROUNDS](docs/REVIEW-ROUNDS.md), LESSONS L91–L92.
+- **Claude Code's local settings kept out of git, secret scan before the commit** ([CI-BUDGET](docs/CI-BUDGET.md#3-security-baseline)
+  §3, #113): `harness-sync.sh` adds `**/.claude/settings.local.json` (where Claude Code stores approved commands, a key
+  included) once to the project's `.gitignore`, never reordering or removing a line; a tracked file or a `!` line is
+  reported, never `git rm`-ed. Optional git pre-commit hook `.harness/hooks/pre-commit-secrets.sh`: gitleaks on the
+  staged changes when installed, says so when it is not. **Action**: review the `.gitignore` line the sync adds; check
+  `/permissions` and revoke any secret already pushed; install the hook if wanted.
 - **Community files**: a [code of conduct](CODE_OF_CONDUCT.md) and the repository's own pull request template
   (`.github/pull_request_template.md`, the one the harness gives projects) (#105).
 - **Factory guide: the motorway picture** (`docs/diagrams/factory-motorway.*`, shown in

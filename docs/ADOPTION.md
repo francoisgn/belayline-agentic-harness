@@ -12,6 +12,7 @@ Why this mechanism (vendoring + plugin + reusable workflows) and its limits: [AD
 | `.harness/labels.json` | copy | Harness: canonical taxonomy |
 | `.harness/LICENSE` | copy | Harness: its licence (MIT), which accompanies the copied files; says nothing about the project's licence |
 | `.harness/hooks/guard-git.py`, `session-start.sh` | copy | Harness |
+| `.harness/hooks/pre-commit-secrets.sh` | copy | Harness: optional git pre-commit secret scan (gitleaks when installed), never installed by the sync ([CI-BUDGET](CI-BUDGET.md#3-security-baseline) §3) |
 | `.claude/skills/<skill>/SKILL.md` | copy | Harness (`/intent`, `/lot-start`, `/lot-finish`, `/review-round`, `/feedback-triage`, `/lessons-check`, `/lesson-propose`, `/compliance-review`, `/status-report`, `/harness-update`) |
 | `.claude/agents/*.md` | copy | Harness: `adversarial-reviewer`, `issue-steward`, `doc-steward`, `flow-monitor`, `compliance-*` (exclude the compliance frameworks you do not need) |
 | `.harness/scripts/flow-metrics.py` | copy | Harness: flow dashboard (`flow-report.yml`, `/status-report`) |
@@ -24,7 +25,8 @@ Why this mechanism (vendoring + plugin + reusable workflows) and its limits: [AD
 | `.harness/scripts/doc-steward.py` | copy | Harness: doc steward's "anything to fold?" decision, the one-fold-at-a-time guard (`fold-guard`), the `note` helper, docs PR body and weekly audit issues (`doc-steward.yml`) |
 | `.claude/settings.json` | merge | Project; the harness only **adds** its two hooks if they are missing |
 | `CLAUDE.md`, `AGENTS.md` | marked block | Project, except the block `<!-- harness:begin harness -->…<!-- harness:end harness -->` |
-| `.harness/config.json`, `.github/labels.local.json`, issue and PR templates, `docs/lots/TEMPLATE.md`, `docs/DECISIONS.md`, `.markdownlint-cli2.jsonc`, `.github/workflows/harness.yml`, `.github/workflows/harness-sync.yml` | seed | Project: created if missing, never rewritten (except the `@vX.Y.Z` references of `harness.yml`) |
+| `.harness/config.json`, `.github/labels.local.json`, issue and PR templates, `docs/lots/TEMPLATE.md`, `docs/DECISIONS.md`, `.markdownlint-cli2.jsonc`, `.coderabbit.yaml`, `.github/workflows/harness.yml`, `.github/workflows/harness-sync.yml` | seed | Project: created if missing, never rewritten (except the `@vX.Y.Z` references of `harness.yml`) |
+| `.gitignore` | one line added | Project: the sync adds `**/.claude/settings.local.json` once at the end (created if missing); a tracked file or a `!` line is only reported |
 | `.harness/VERSION`, `.harness/lock` | generated | Version, harness commit, checksums of the copied files |
 | `.github/workflows/harness-relay.yml` | refbump only | Project, **on the default branch**, only when it is not the integration branch: never created by the sync, which only pins the references of a copy kept on the integration branch ([below](#integration-branch-that-is-not-the-default-branch)) |
 
@@ -70,6 +72,8 @@ to the session; on the Mac: `gh auth login && gh auth setup-git`).
      (1280×640). Images missing: an issue, they can follow the adoption.
 5. **Verify**: `../belayline/scripts/harness-sync.sh --target . --check` exits with 0; `git diff --stat` shows
    only what is expected; start a Claude session and see the "Belayline" message at startup.
+   Secrets: check `/permissions` for approved commands that carry a key, and revoke any secret already pushed
+   (`.claude/settings.local.json` in the history, [CI-BUDGET](CI-BUDGET.md#3-security-baseline) §3).
 6. **Single commit**, then draft PR:
    `Belayline 0.3.0: adoption` (body: what was removed from `CLAUDE.md`, workflows replaced, labels
    moved; no `### Ledger`: tooling).
@@ -185,6 +189,7 @@ Other keys, read by the hooks and the skills (missing: default values):
 | `default_branch_check` | `true` | When `integration_branch` is not the repository's default branch (GitHub runs `issues`, `issue_comment`, `pull_request_target` and `schedule` workflows from the default branch only), a first adoption stops and later syncs, the session start and `pr-hygiene.yml` print a 🟠 warning ([above](#integration-branch-that-is-not-the-default-branch)); `false` does neither (the adoption says once what will not run) |
 | `merge_gate.required_labels`, `merge_gate.security_labels`, `merge_gate.body_lines` | `[]`, `["type: security"]`, `["issue", "claim", "docs"]` | Merge gate (`merge-gate.py`, [CONVENTIONS](CONVENTIONS.md) §Pull requests): labels a PR needs before merge, labels that block until the operator decides, PR body lines checked; `[]` leaves the line out |
 | `ledger.enabled`, `ledger.label`, `ledger.fold_command` | `false`, `"ledger"`, `""` | Ledger ([CONVENTIONS](CONVENTIONS.md) §Ledger): `### Ledger` section of the PRs (the entry), label the steward marks `<label>: done`, the steward's fold command |
+| `coderabbit.agent_requests_review` | `false` | `true`: `/review-round` posts `@coderabbitai review` itself, once per ready head the bot has not reviewed, never on a draft ([REVIEW-SERVICE](REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project) §5); `false`: it asks the operator |
 
 `.harness/config.json` is a project file (created once): a key added by a new version of the harness does not add
 itself to it; without it, the default applies.

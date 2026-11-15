@@ -66,8 +66,10 @@ checks the change against the **intent**, the second checks the **code** on its 
    tighten that step. New kind = new line.
 
 A review bot can skip a review ("Review skipped") or pause on a branch: after the push,
-check that it reviewed the **new head**; otherwise ask for `@coderabbitai review` (from a cloud session,
-`@mentions` are altered: the operator posts it). The round is complete only when the bot, or its fallback
+check that it reviewed the **new head**; otherwise ask for `@coderabbitai review`: the agent posts it once per
+ready head when `.harness/config.json` › `coderabbit.agent_requests_review` is true
+([REVIEW-SERVICE](REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project) §5), else the operator does (from a cloud
+session, `@mentions` are altered). The round is complete only when the bot, or its fallback
 (§The two reviews), has reviewed the pushed head.
 
 **CI noise or real failure**: a check that fails in a few seconds with no log (missing token, service
@@ -141,8 +143,10 @@ right if **all** verdicts are visible on the PR, above all the first negative on
 A PR merged with no traced verdict is reported separately (🟠) and leaves the ratio.
 
 ## Recommended CodeRabbit configuration
-Modelled on the two projects (`.coderabbit.yaml`): `language` set to the project's language (`fr-FR` in both),
-`auto_review.drafts: false` (no review of drafts, like the CI), `base_branches` = integration and promotion branches,
+Modelled on the two projects (`.coderabbit.yaml`; the harness seeds the review keys, [REVIEW-SERVICE](REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project)
+§5): `language` set to the project's language (`fr-FR` in both),
+`auto_review.drafts: false` (no review of drafts, like the CI), `auto_incremental_review: false` (one review per
+ready head), `base_branches` = integration and promotion branches,
 `path_filters` that exclude generated files (PNG, exported SVG), `path_instructions` that restate the project's rules
 per directory (engine without UI, workflows pinned by SHA with minimal permissions, anonymised test data, sourced
 docs). Profile `chill` for a solo project, `assertive` when external contributors arrive.
