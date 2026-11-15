@@ -41,6 +41,12 @@ moving to this version.
   the integration branch) and runs `queued` with zero jobs, from the Actions API with at most 3 + `max_job_requests`
   extra requests; "could not check" rather than "nothing" when the API fails. Thresholds in `.harness/config.json` ›
   `ci_health`. Playbook for a red base and a stuck run in [REVIEW-ROUNDS](docs/REVIEW-ROUNDS.md), LESSONS L91–L92.
+- **Claude Code's local settings kept out of git, secret scan before the commit** ([CI-BUDGET](docs/CI-BUDGET.md#3-security-baseline)
+  §3, #113): `harness-sync.sh` adds `**/.claude/settings.local.json` (where Claude Code stores approved commands, a key
+  included) once to the project's `.gitignore`, never reordering or removing a line; a tracked file or a `!` line is
+  reported, never `git rm`-ed. Optional git pre-commit hook `.harness/hooks/pre-commit-secrets.sh`: gitleaks on the
+  staged changes when installed, says so when it is not. **Action**: review the `.gitignore` line the sync adds; check
+  `/permissions` and revoke any secret already pushed; install the hook if wanted.
 - **Community files**: a [code of conduct](CODE_OF_CONDUCT.md) and the repository's own pull request template
   (`.github/pull_request_template.md`, the one the harness gives projects) (#105).
 - **Factory guide: the motorway picture** (`docs/diagrams/factory-motorway.*`, shown in

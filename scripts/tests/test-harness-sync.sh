@@ -151,6 +151,37 @@ ok "unreadable config.json refused"
 [ "$(run --skip-workflows --skip-seed)" = 0 ] || fail "--skip-workflows"
 ok "--skip-workflows / --skip-seed"
 
+# Claude Code's local settings file stays out of git (#113): .gitignore created, or completed once at its end with the
+# project's lines kept in order; a tracked or deliberately un-ignored file is reported and left alone (no git rm).
+GE='**/.claude/settings.local.json'
+GI="$WORK/gitignore"
+gisync() { "$SYNC" --source "$ROOT" --target "$GI" "$@" >"$WORK/gi.out" 2>&1; echo $?; }
+mkdir -p "$GI" && git -C "$GI" init -q -b develop
+[ "$(gisync)" = 0 ] && [ "$(grep -cFx "$GE" "$GI/.gitignore")" = 1 ] || fail "gitignore: not created with the entry: $(cat "$WORK/gi.out")"
+[ -x "$GI/.harness/hooks/pre-commit-secrets.sh" ] || fail "pre-commit secret scan not vendored executable"
+printf 'build/\n# keep this order\n*.log' >"$GI/.gitignore"   # no final newline
+cp "$GI/.gitignore" "$WORK/gi.before"
+[ "$(gisync --check)" = 1 ] && cmp -s "$GI/.gitignore" "$WORK/gi.before" || fail "gitignore: --check must report the missing entry and write nothing"
+[ "$(gisync)" = 0 ] || fail "gitignore: sync on an existing file: $(cat "$WORK/gi.out")"
+[ "$(head -3 "$GI/.gitignore")" = "$(printf 'build/\n# keep this order\n*.log')" ] || fail "gitignore: project lines changed or reordered"
+[ "$(grep -cFx "$GE" "$GI/.gitignore")" = 1 ] && [ "$(tail -1 "$GI/.gitignore")" = "$GE" ] || fail "gitignore: entry not appended once at the end"
+cp "$GI/.gitignore" "$WORK/gi.after"
+[ "$(gisync)" = 0 ] && grep -q 'Up to date' "$WORK/gi.out" && cmp -s "$GI/.gitignore" "$WORK/gi.after" || fail "gitignore: second sync not idempotent"
+printf 'dist/\n.claude/settings.local.json\n' >"$GI/.gitignore"
+[ "$(gisync --check)" = 0 ] || fail "gitignore: the root-only spelling counts as present: $(cat "$WORK/gi.out")"
+printf 'dist/\n!.claude/settings.local.json\n' >"$GI/.gitignore"
+cp "$GI/.gitignore" "$WORK/gi.before"
+[ "$(gisync)" = 0 ] && cmp -s "$GI/.gitignore" "$WORK/gi.before" && grep -q 'settings.local.json' "$WORK/gi.out" \
+  || fail "gitignore: a negated entry must be reported and left alone: $(cat "$WORK/gi.out")"
+printf 'dist/\n' >"$GI/.gitignore" && cp "$GI/.gitignore" "$WORK/gi.before"
+mkdir -p "$GI/.claude" && printf '{}\n' >"$GI/.claude/settings.local.json" && git -C "$GI" add .claude/settings.local.json
+[ "$(gisync --check)" = 0 ] || fail "gitignore: a tracked file is reported, not drift: $(cat "$WORK/gi.out")"
+grep -q 'tracked' "$WORK/gi.out" && grep -q '.claude/settings.local.json' "$WORK/gi.out" || fail "gitignore: tracked file not reported"
+[ "$(gisync)" = 0 ] && cmp -s "$GI/.gitignore" "$WORK/gi.before" || fail "gitignore: tracked file: .gitignore must be left as it is"
+git -C "$GI" ls-files --error-unmatch .claude/settings.local.json >/dev/null 2>&1 && [ -f "$GI/.claude/settings.local.json" ] \
+  || fail "gitignore: the tracked file must stay tracked (no git rm)"
+ok "gitignore: settings.local.json entry created, appended once, idempotent; tracked or negated file reported"
+
 # Integration branch vs default branch (GitHub runs issue/schedule/pull_request_target workflows from the default branch only).
 SS="$ROOT/plugins/harness/scripts/session-start.sh"
 T3="$WORK/dbcheck"

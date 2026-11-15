@@ -123,6 +123,19 @@ Workflow hygiene (checked by zizmor and by review):
 - pre-commit: hook repositories frozen by SHA (Dependabot does not read this file: update by hand); no
   reformatting hook (test data stays byte for byte).
 
+**Before the commit** (optional, offered): `.harness/hooks/pre-commit-secrets.sh`, a git pre-commit hook that runs
+`gitleaks git --pre-commit --redact --staged --verbose` when gitleaks is installed and refuses the commit on a
+finding; without gitleaks it says the staged changes were **not** scanned and lets the commit go on. Install:
+`ln -s "$(git rev-parse --show-toplevel)/.harness/hooks/pre-commit-secrets.sh" "$(git rev-parse --git-path hooks)/pre-commit"`
+(or call it from an existing hook). It does not replace the CI scan above (full history, after the push).
+Claude Code stores "Yes, and don't ask again" approvals, a key typed in the command included, in
+`.claude/settings.local.json`, and only adds that file to the person's global git excludes
+([settings](https://code.claude.com/docs/en/settings#keep-personal-settings-out-of-a-repository), read 2026-11-15):
+the sync adds `**/.claude/settings.local.json` to the project's `.gitignore`. GitGuardian counted 31,088 secrets in
+that file on public GitHub (23,276 repositories, January 2025 to 7 November 2026), 5,343 valid at detection
+([GitGuardian, 2026-11-09](https://blog.gitguardian.com/claude-code-settings-local-json-secrets-docker-hub/), read
+2026-11-15).
+
 Full pipeline in one call: `security.yml` (Semgrep CE, Trivy `fs`, gitleaks, in one job; default Semgrep rules
 `p/default p/secrets p/github-actions`, add those of the language, e.g. `p/swift`); `docs-security.yml`
 for docs and workflows. Call both without doubling gitleaks (input `gitleaks: false` on one of them).

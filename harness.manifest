@@ -58,6 +58,8 @@ copy      templates/comments/child-report.md          .harness/templates/child-r
 copy      plugins/harness/scripts/guard-git.py        .harness/hooks/guard-git.py
 copy      plugins/harness/scripts/session-start.sh    .harness/hooks/session-start.sh
 jsonmerge templates/.claude/settings.harness.json     .claude/settings.json
+# Optional git pre-commit secret scan (gitleaks when installed); offered, never installed by the sync (CI-BUDGET.md §3)
+copy      scripts/pre-commit-secrets.sh               .harness/hooks/pre-commit-secrets.sh
 
 # Agent instructions: only the "harness" block belongs to the harness
 block     templates/CLAUDE.md.block                   CLAUDE.md   harness templates/CLAUDE.md.template
