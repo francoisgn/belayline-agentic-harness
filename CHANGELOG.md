@@ -5,6 +5,10 @@ moving to this version.
 
 ## Unreleased
 
+- **Lessons to checks, context cost** ([docs/lessons-inventory.md](docs/lessons-inventory.md), #115): the 89
+  `judgment` lessons sorted by whether a script could enforce them (7 yes, 41 partly, 41 no), and the measured
+  per-session load of the harness in Claude Code (~3,900 tokens, of which ~650 for compliance agents loaded even when
+  not enabled), with proposals. No lesson changed. **Action**: none.
 - **CI budget, billing units** ([docs/CI-BUDGET.md](docs/CI-BUDGET.md) §1, #96): GitHub states the included usage in
   dollars and a price per minute by runner; the two rules (macOS about ten times Linux, every job rounded up) are
   unchanged. Sourced and dated.
