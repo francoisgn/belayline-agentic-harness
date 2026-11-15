@@ -4,6 +4,7 @@ Self-review against this table **before every PR and every review fix** (skill `
 cycle, compare the findings with the table ([REVIEW-ROUNDS](REVIEW-ROUNDS.md) step 9): already listed = the
 self-review missed it, tighten that step; new kind = new row, proposed to the harness by PR if it applies elsewhere,
 otherwise kept in the project's own lessons.
+Which rows a script could enforce, and what the harness costs per session: [lessons-inventory](lessons-inventory.md).
 
 **Adding one** (skill `/lesson-propose`): a lesson that holds beyond one project goes up to the harness through a
 **"Lesson" issue** on `francoisgn/belayline-agentic-harness` (dedicated form, label `lesson`): scope, lesson in one verifiable

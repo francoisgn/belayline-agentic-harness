@@ -79,6 +79,8 @@ seed      templates/docs/lots/TEMPLATE.md             docs/lots/TEMPLATE.md
 seed      templates/docs/compliance/TEMPLATE.md       docs/compliance/TEMPLATE.md
 seed      templates/docs/DECISIONS.md                 docs/DECISIONS.md
 seed      templates/.markdownlint-cli2.jsonc          .markdownlint-cli2.jsonc
+# CodeRabbit: one automatic review per ready head (REVIEW-SERVICE.md §3)
+seed      templates/.coderabbit.yaml                  .coderabbit.yaml
 # Local check = the CI (CI-BASELINE.md §3): a skeleton that says INCOMPLETE until /local-check fills in its steps
 seed      templates/scripts/local-check.sh            scripts/local-check.sh
 # README at the harness standard: never rewritten if it already exists (readme-check.py then lists the gaps)

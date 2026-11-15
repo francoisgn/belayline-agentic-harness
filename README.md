@@ -121,6 +121,7 @@ Knowledge flows both ways: propose a lesson born in your project through the "Le
 | [`docs/README-STANDARD.md`](docs/README-STANDARD.md) | The README that agents maintain by default: badges, image, Excalidraw diagram, progress, Contributing |
 | [`docs/CI-BASELINE.md`](docs/CI-BASELINE.md), [`docs/CI-BUDGET.md`](docs/CI-BUDGET.md) | Tiered CI baseline; CI minutes, security (SAST, SCA, secrets), variables, agentic volume |
 | [`docs/LESSONS.md`](docs/LESSONS.md) | Lessons by scope, sources cited; how to propose one |
+| [`docs/lessons-inventory.md`](docs/lessons-inventory.md) | Which lessons a check could enforce; context cost of the harness per session |
 | [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md), [`docs/BRANCHING-RELEASE.md`](docs/BRANCHING-RELEASE.md), [`docs/MAC-HANDOFF.md`](docs/MAC-HANDOFF.md) | Commits and PRs, repository identity (description, topics, banner, social preview), branches and versions, split between cloud and local machine |
 | [`docs/POSITIONING.md`](docs/POSITIONING.md) | Where Belayline sits among agent harnesses: process vs runtime, sources |
 | [`docs/ai-layers/`](docs/ai-layers/README.md) | The layers of AI tools, by audience: presentation, agent, execution, inference and the contract behind it |

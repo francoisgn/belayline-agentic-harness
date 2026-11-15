@@ -1,0 +1,15 @@
+# CodeRabbit settings seeded by the Belayline harness: created once, then the project's own (never rewritten).
+# Harness rule: one automatic review per ready head, not one per push (.harness/docs/REVIEW-SERVICE.md §3), so the
+# bot and the agent do not loop on each other. A later head is reviewed on request: `@coderabbitai review`, posted by
+# the operator, or by the agent when `.harness/config.json` › `coderabbit.agent_requests_review` is true
+# (/review-round step 7).
+# Keys, defaults and meanings: https://docs.coderabbit.ai/reference/configuration (read 2026-11-15).
+language: en-US            # default en-US: set the project's language (e.g. fr-FR)
+reviews:
+  auto_review:
+    enabled: true          # default true: "Review PRs automatically."
+    drafts: false          # default false: "Include draft PRs." A draft is never reviewed, like the CI.
+    auto_incremental_review: false  # default true: "Re-run the review on each push." Off: no review per push.
+    auto_pause_after_reviewed_commits: 2  # default 5: "Pause automatic reviews after this many reviewed commits
+                                          # since the last pause. Set to 0 to disable." Backstop if the line above
+                                          # is turned back on.
