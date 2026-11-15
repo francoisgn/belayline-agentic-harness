@@ -5,6 +5,20 @@ moving to this version.
 
 ## Unreleased
 
+## 0.4.0 — 2026-11-15
+
+First release under the name **Belayline** (repository `francoisgn/belayline-agentic-harness`). Before 1.0.0 a MINOR
+may break: read the **Action** lines below. The main ones when moving from 0.3.0:
+
+- point `uses:` references and the clone URL at the new repository name (the sync rewrites them);
+- after the sync, the docs job fails on any workflow job without `timeout-minutes` (`job-timeout.py`);
+- the sync adds `**/.claude/settings.local.json` to `.gitignore` and seeds `.coderabbit.yaml` (set its `language`);
+- run the label sync to create `status: on-hold` and move the issues held by an outside cause.
+
+Also in this version: the ledger and doc steward, the merge gate, the orchestrator state comment, CI health signals
+in the dashboard, rules for slow suites, the lessons exit rule (86 rows), and the factory guide (seven parts, with
+the motorway picture).
+
 - **Lessons: first pass of the exit rule** ([docs/LESSONS.md](docs/LESSONS.md), #114): L07 and L53 archived (enforced by
   markdownlint and zizmor); L25, L45, L60 and L87 merged into L24, L20, L59 and L86. 86 rows left in the table; the
   archived ids still resolve and are never reused. **Action**: none.
