@@ -20,6 +20,10 @@ The rows below predate the classes and keep their id; the **Class** column says 
 verifies it, so the self-review skips it; a project that switched that check off reads the row again);
 `mechanical, check to write` (an issue asks for the check; the row stays in the self-review until the check is
 merged, then becomes "enforced by"); `one-off` (kept for its id, not re-read).
+**Leaving the table**: a row moves to the [Archive](#archive), id kept and never reused (citations still resolve),
+when a check enforces it (the row becomes that check's documentation), when it duplicates or is a special case of
+another row (merged into that row), or when it is `one-off`. A `judgment` row that no review or correction has cited
+for six months is only a candidate: `/lessons-check` lists it, the operator decides.
 
 **Scope**: `general` (any project) · `swift` · `ios` · `linux-cloud` (sessions in a Linux container) · `ci` · `docs`.
 A project without Swift ignores `swift` and `ios`. Domain lessons (a site's protocol, a financial rule) stay in the
@@ -124,3 +128,11 @@ The `L..` numbers are stable: a lesson that has become false is struck through, 
 | L90 | general | A slow or hung test is never made green by skipping, disabling, quarantining or deleting it, or by loosening its assertion: one rerun at most (L47), then fix the wait, the code or the job layout. Detail: [CI-BUDGET §6](CI-BUDGET.md#6-slow-suites-job-timeouts-test-time-limits-waits-on-events) | HFR #801, 2026-11-12 | judgment |
 | L91 | ci | While the integration branch is red on a job, do not re-run PRs red on that same job: fix the base, then re-run them one after the other; a re-run that turns green is a `type: bug` issue on the job, not a pass | HFR #801 (2026-11-11: 10 red, 4 green on one job); Belayline #101 | judgment |
 | L92 | ci | A run `queued` with zero jobs that answers 409 to cancel is stuck on GitHub's side: give the PR a real new event (update from the base; the review holds only if `git show --remerge-diff` on the merge is empty), never an empty commit or a close and reopen; report the run ids to GitHub Support | HFR #801 (2026-11-11, 19 runs); Belayline #101 | judgment |
+
+## Archive
+
+Rows that left the table (rule above): not re-read by `/lessons-check`; **Left because** is `merged into Lnn`,
+`enforced by <check>` or `one-off`.
+
+| # | Scope | Lesson | Source | Left because |
+|---|---|---|---|---|

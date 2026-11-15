@@ -5,6 +5,11 @@ moving to this version.
 
 ## Unreleased
 
+- **Lessons: exit rule and archive** ([docs/LESSONS.md](docs/LESSONS.md), #114): a row leaves the table for the
+  new Archive section (id kept, never reused, still citable) when a check enforces it, when it duplicates or is a
+  special case of another row (merged), or when it is `one-off`; a `judgment` row uncited for six months is only a
+  candidate. `/lessons-check` lists the candidates; `test_lesson_ids.py` checks ids across both sections. No row
+  moved yet: the operator decides on the first pass. **Action**: none.
 - **Docs: Cloudflare's security-audit skill and five peer projects** ([review-and-scanning §2.3](docs/factory/review-and-scanning.md#23-your-own-agent),
   [POSITIONING §3](docs/POSITIONING.md), #117): the map, hunt, disprove, three-list pattern and how it relates to the
   adversarial reviewer; one line per peer, each read on its own page on 2026-11-15, no star counts.
