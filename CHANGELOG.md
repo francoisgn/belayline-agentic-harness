@@ -5,6 +5,9 @@ moving to this version.
 
 ## Unreleased
 
+- **Docs: Cloudflare's security-audit skill and five peer projects** ([review-and-scanning §2.3](docs/factory/review-and-scanning.md#23-your-own-agent),
+  [POSITIONING §3](docs/POSITIONING.md), #117): the map, hunt, disprove, three-list pattern and how it relates to the
+  adversarial reviewer; one line per peer, each read on its own page on 2026-11-15, no star counts.
 - **CI budget, billing units** ([docs/CI-BUDGET.md](docs/CI-BUDGET.md) §1, #96): GitHub states the included usage in
   dollars and a price per minute by runner; the two rules (macOS about ten times Linux, every job rounded up) are
   unchanged. Sourced and dated.

@@ -185,6 +185,21 @@ the official text are marked "(to verify)", as in
 [compliance-pci.md](../../plugins/harness/agents/compliance-pci.md) and
 [compliance-tisax.md](../../plugins/harness/agents/compliance-tisax.md).
 
+**A pattern from outside: Cloudflare's security-audit skill.** Cloudflare publishes the single-repository starting
+point of its vulnerability harness as [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill)
+(MIT licence; README and licence read 2026-11-15), and describes the full harness in
+[Build your own vulnerability harness](https://blog.cloudflare.com/build-your-own-vulnerability-harness)
+(published 2026-06-18, read 2026-11-15). The README's flow is: map the architecture and trust boundaries; send
+isolated hunters over each unit of the map; "give every unique candidate to a fresh verifier that tries to disprove
+it"; write the result as three separate lists, `confirmed` (a complete source trace), `needs_validation` (the exact
+fact still unresolved) and `rejected` (a disproved candidate). The blog adds that the validator "cannot file findings
+itself" and that the discovery and validation stages use different models; we read both claims as the authors'
+own, and did not run the skill. It is the same logic as `adversarial-reviewer`: a fresh agent, isolated from the
+author, with one job, to find what is wrong. Two differences: the Cloudflare verifier checks each candidate
+*vulnerability* the hunters found, while `adversarial-reviewer` checks one *change* against the issue's intent; and
+its output keeps a "not yet verified" list apart from the confirmed one, which the compliance agents' fixed verdict
+format could borrow (not decided here).
+
 ## 3. Steps × the three ways
 
 ★ marks what the harness uses or ships ([CI-BUDGET §3](../CI-BUDGET.md#3-security-baseline): first value for a public
@@ -293,6 +308,9 @@ Vendor pages, read on the date given. Full quotes: [research notes](sources/revi
   [GitLab Duo in merge requests](https://docs.gitlab.com/user/project/merge_requests/duo_in_merge_requests/),
   [Explain vulnerabilities with AI](https://docs.gitlab.com/user/application_security/analyze/duo/),
   [GitLab Duo feature summary](https://docs.gitlab.com/user/gitlab_duo/feature_summary/).
+- Cloudflare, read 2026-11-15:
+  [security-audit-skill](https://github.com/cloudflare/security-audit-skill),
+  [Build your own vulnerability harness](https://blog.cloudflare.com/build-your-own-vulnerability-harness).
 - Independent tools, read 2026-11-12:
   [CodeRabbit docs](https://docs.coderabbit.ai/),
   [CodeRabbit review overview](https://docs.coderabbit.ai/guides/code-review-overview),
