@@ -5,6 +5,13 @@ moving to this version.
 
 ## Unreleased
 
+- **Docs: Cloudflare's security-audit skill and five peer projects** ([review-and-scanning §2.3](docs/factory/review-and-scanning.md#23-your-own-agent),
+  [POSITIONING §3](docs/POSITIONING.md), #117): the map, hunt, disprove, three-list pattern and how it relates to the
+  adversarial reviewer; one line per peer, each read on its own page on 2026-11-15, no star counts.
+- **Lessons to checks, context cost** ([docs/lessons-inventory.md](docs/lessons-inventory.md), #115): the 89
+  `judgment` lessons sorted by whether a script could enforce them (7 yes, 41 partly, 41 no), and the measured
+  per-session load of the harness in Claude Code (~3,900 tokens, of which ~650 for compliance agents loaded even when
+  not enabled), with proposals. No lesson changed. **Action**: none.
 - **CodeRabbit: one review per ready head** ([REVIEW-SERVICE](docs/REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project)
   §5, #116): the sync seeds `.coderabbit.yaml` when it is missing (drafts not reviewed, no review per push, auto-pause
   after 2 reviewed commits; keys quoted from CodeRabbit's reference read on 2026-11-15), never rewritten. New
