@@ -26,6 +26,8 @@
 #   "default_branch_check": false never stops nor warns (says once, at adoption, what will not run).
 # ("language" in that file is the project's language for agents; it does not select the harness sources.)
 # Migration: a managed block still marked with the former id `cadre` gets its two marker lines rewritten to `harness`.
+# .gitignore: gets **/.claude/settings.local.json once (Claude Code's local settings can hold secrets); a tracked file
+# or a `!` line is only reported.
 # Exit codes: 0 = ok; 1 = --check found drift; 2 = usage or error; 3 = conflicts (files left as they are);
 # 4 = first adoption stopped, nothing written: the integration branch is not the default branch.
 # Bash 3.2 compatible (macOS); python3 only for the jsonmerge mode and to read .harness/config.json.
@@ -350,6 +352,37 @@ while read -r kind src rel id tpl; do
   esac
 done <"$SRC/harness.manifest"
 
+# Claude Code's local settings file stays out of git (#113). Claude Code writes approved commands there ("Yes, and don't
+# ask again"), secrets included, and only adds it to the person's GLOBAL git excludes (code.claude.com/docs/en/settings,
+# "Keep personal settings out of a repository"), so another machine can still commit it. The project's .gitignore gets
+# the pattern Claude Code itself uses: created if missing, appended once at the end otherwise; the project's lines are
+# never reordered or removed. A tracked file or a `!` line is the project's choice: reported, nothing changed.
+GITIGNORE_ENTRY='**/.claude/settings.local.json'
+GITIGNORE_NOTE=""
+ensure_gitignore() {
+  local dest="$TARGET/.gitignore" tracked
+  is_excluded ".gitignore" && return 0
+  tracked="$(git -C "$TARGET" ls-files -- '.claude/settings.local.json' '*/.claude/settings.local.json' 2>/dev/null | tr '\n' ' ')" || tracked=""
+  if [ -n "$tracked" ]; then
+    GITIGNORE_NOTE="🟠 ${tracked% }: tracked by git (Claude Code's local settings: approved commands, possibly with a secret). Left as it is; if not on purpose, revoke any secret it holds, \`git rm --cached\` it, and the next sync adds $GITIGNORE_ENTRY to .gitignore."
+    return 0
+  fi
+  if [ -f "$dest" ] && grep -qE '^!(\*\*/|/)?\.claude/settings\.local\.json[[:space:]]*$' "$dest"; then
+    GITIGNORE_NOTE="🟠 .gitignore un-ignores .claude/settings.local.json (a \`!\` line): left as it is. That file can hold secrets from approved commands."
+    return 0
+  fi
+  if [ -f "$dest" ] && grep -qE '^(\*\*/|/)?\.claude/settings\.local\.json[[:space:]]*$' "$dest"; then return 0; fi
+  if [ -s "$dest" ]; then
+    cp "$dest" "$WORK/gitignore"
+    [ -z "$(tail -c 1 "$dest")" ] || printf '\n' >>"$WORK/gitignore"
+  else
+    : >"$WORK/gitignore"
+  fi
+  printf '%s\n' "$GITIGNORE_ENTRY" >>"$WORK/gitignore"
+  put ".gitignore" "$WORK/gitignore"
+}
+ensure_gitignore
+
 # Harness files removed since the last sync: deleted if they were not modified.
 while IFS="$(printf '\t')" read -r _ recorded rel; do
   [ -n "$rel" ] || continue
@@ -374,6 +407,7 @@ put ".harness/VERSION" "$WORK/version"
 put "$LOCK_REL" "$WORK/lock"
 
 default_branch_alert
+[ -z "$GITIGNORE_NOTE" ] || printf '%s\n' "$GITIGNORE_NOTE"
 [ "$MODE" != check ] || gap_report
 [ "$SKIPPED" = 0 ] || printf '  (%s entry(ies) under .github/workflows/ skipped: --skip-workflows)\n' "$SKIPPED"
 if [ "$CONFLICTS" -gt 0 ]; then
