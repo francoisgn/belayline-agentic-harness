@@ -1,6 +1,6 @@
 # Where Belayline sits among agent harnesses
 
-> **Last checked: 2026-11-10.** The projects below change fast. Every statement about a project cites the page it
+> **Last checked: 2026-11-15.** The projects below change fast. Every statement about a project cites the page it
 > comes from and quotes that project's own claims; none of their benchmarks were rerun here.
 
 **TL;DR**
@@ -94,6 +94,17 @@ This is the split described in [ORCHESTRATION](ORCHESTRATION.md) and [FINOPS](FI
 | [sacuadros/agent-harness](https://github.com/sacuadros/agent-harness) | Distribution of rules | One source of rules, skills, subagents and guard hooks, rendered into each agent's own files. Fail-closed guards; a scope check on turns that reach 5 files or 150 lines | MIT, tests |
 | [latintzar/harness](https://github.com/latintzar/harness) | Application platform | A Codex-based harness with generative UI for business "verticals": scoped files, approvals, spend accounting | MIT |
 | [arXiv 2610.25568](https://arxiv.org/html/2610.25568v1) | Research | A planner, worker and reviewer harness evaluated on four benchmarks (Spine AI, 18 Oct 2026) | CC BY 4.0 |
+
+Five widely used agent-instruction projects, each read on 2026-11-15 from its own repository (README and licence).
+They are not harnesses in the sense above, and we cite no popularity figure. One line each:
+
+| Project | What it says it does | How Belayline differs |
+|---|---|---|
+| [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) | "Skills for Real Engineers": small, composable skills such as `/grill-me`, `/tdd`, `/diagnosing-bugs`, for several agents | Skills the developer calls by hand; Belayline adds the process around them: intent, an isolated review, traced verdicts, bounded loops |
+| [obra/superpowers](https://github.com/obra/superpowers) (MIT) | "A complete software development methodology for your coding agents": questions, design, plan, then subagents that review each other's work, with TDD skills | The closest in spirit, a methodology in skills; it works inside one session, while Belayline keeps plan and state in the repository and requires a reviewer of another model |
+| [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT; the older `forrestchang` address redirects here) | A single `CLAUDE.md` of four principles drawn from Andrej Karpathy's remarks on LLM coding mistakes | A style guide for one agent's behaviour; Belayline does not tune how the author writes, it checks the result |
+| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) (MIT) | A prompt that makes the agent write less code: a ladder from "is it needed" down to the minimum, plus review and audit commands | A conciseness rule for the author; Belayline's review asks whether the change does what the issue asked, not how short it is |
+| [affaan-m/ECC](https://github.com/affaan-m/ECC) (MIT) | "A coordinated engineering system and toolbox" for coding agents: planning, verification, review, memory, many agents and skills, adapters for several harnesses | A large toolbox installed per developer; Belayline is small by design (`SCOPE.md`) and its state lives in issues and PRs, not in the tool |
 
 Of these, sacuadros/agent-harness is the closest to Belayline. It also spreads one set of rules across several
 agents. It works on the developer's machine, while Belayline works through the repository.
@@ -192,6 +203,14 @@ All read 2026-11-10.
 - https://github.com/latintzar/harness
 - https://arxiv.org/html/2610.25568v1
 - https://github.com/google/elephant-goldfish-model
+
+Read 2026-11-15:
+
+- https://github.com/mattpocock/skills
+- https://github.com/obra/superpowers
+- https://github.com/multica-ai/andrej-karpathy-skills
+- https://github.com/DietrichGebert/ponytail
+- https://github.com/affaan-m/ECC
 
 Not read, blocked by a Cloudflare challenge: the Medium article "How to build an agent harness that decides in 0.65
 seconds", and Dave Rensin's essay credited by the Elephant–Goldfish Model.
