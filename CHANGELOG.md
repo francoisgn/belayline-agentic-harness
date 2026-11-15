@@ -5,6 +5,9 @@ moving to this version.
 
 ## Unreleased
 
+- **Lessons: first pass of the exit rule** ([docs/LESSONS.md](docs/LESSONS.md), #114): L07 and L53 archived (enforced by
+  markdownlint and zizmor); L25, L45, L60 and L87 merged into L24, L20, L59 and L86. 86 rows left in the table; the
+  archived ids still resolve and are never reused. **Action**: none.
 - **Lessons: exit rule and archive** ([docs/LESSONS.md](docs/LESSONS.md), #114): a row leaves the table for the
   new Archive section (id kept, never reused, still citable) when a check enforces it, when it duplicates or is a
   special case of another row (merged), or when it is `one-off`; a `judgment` row uncited for six months is only a

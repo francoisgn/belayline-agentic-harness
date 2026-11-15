@@ -168,8 +168,13 @@ class LessonClassTests(unittest.TestCase):
             self.assertIn(f"`{cls}`", text)
         self.assertIn("Class", text)
         self.assertIn("enforced by", text)
-        read = [i for i, c in rows() if c[-1] in READ_BY_SELF_REVIEW]
-        self.assertLess(len(read), len(rows()), "the self-review must read fewer rows than the table holds")
+        # Every row of the table is either read by the self-review or names why not (enforced, one-off); rows that
+        # left the table (Archive) are never read. Since the first pass of #114 the enforced rows are archived, so
+        # the table may hold only rows to read.
+        for lesson, cells in rows():
+            self.assertTrue(cells[-1] in READ_BY_SELF_REVIEW or cells[-1].startswith(ENFORCED)
+                            or cells[-1] == "one-off", f"{lesson}: class {cells[-1]!r} neither read nor exempt")
+        self.assertIn("Archive", text)
 
     def test_header_states_the_exit_rule_and_the_skill_lists_candidates(self):
         header = _sections()[0].split("| # |")[0]
