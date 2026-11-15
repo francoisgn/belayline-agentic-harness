@@ -12,6 +12,14 @@ moving to this version.
   `judgment` lessons sorted by whether a script could enforce them (7 yes, 41 partly, 41 no), and the measured
   per-session load of the harness in Claude Code (~3,900 tokens, of which ~650 for compliance agents loaded even when
   not enabled), with proposals. No lesson changed. **Action**: none.
+- **CodeRabbit: one review per ready head** ([REVIEW-SERVICE](docs/REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project)
+  §5, #116): the sync seeds `.coderabbit.yaml` when it is missing (drafts not reviewed, no review per push, auto-pause
+  after 2 reviewed commits; keys quoted from CodeRabbit's reference read on 2026-11-15), never rewritten. New
+  `.harness/config.json` key `coderabbit.agent_requests_review` (default `false`): on, `/review-round` posts
+  `@coderabbitai review` itself, once per ready head the bot has not reviewed, never on a draft; off, it asks the
+  operator as before. Whether CodeRabbit reviews on draft to ready is still to verify (three-step test in §5).
+  **Action**: set `language` in the seeded `.coderabbit.yaml`; add `"coderabbit": { "agent_requests_review": true }`
+  where agents may post the request.
 - **CI budget, billing units** ([docs/CI-BUDGET.md](docs/CI-BUDGET.md) §1, #96): GitHub states the included usage in
   dollars and a price per minute by runner; the two rules (macOS about ten times Linux, every job rounded up) are
   unchanged. Sourced and dated.

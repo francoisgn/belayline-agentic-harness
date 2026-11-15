@@ -24,7 +24,7 @@ Why this mechanism (vendoring + plugin + reusable workflows) and its limits: [AD
 | `.harness/scripts/doc-steward.py` | copy | Harness: doc steward's "anything to fold?" decision, the one-fold-at-a-time guard (`fold-guard`), the `note` helper, docs PR body and weekly audit issues (`doc-steward.yml`) |
 | `.claude/settings.json` | merge | Project; the harness only **adds** its two hooks if they are missing |
 | `CLAUDE.md`, `AGENTS.md` | marked block | Project, except the block `<!-- harness:begin harness -->…<!-- harness:end harness -->` |
-| `.harness/config.json`, `.github/labels.local.json`, issue and PR templates, `docs/lots/TEMPLATE.md`, `docs/DECISIONS.md`, `.markdownlint-cli2.jsonc`, `.github/workflows/harness.yml`, `.github/workflows/harness-sync.yml` | seed | Project: created if missing, never rewritten (except the `@vX.Y.Z` references of `harness.yml`) |
+| `.harness/config.json`, `.github/labels.local.json`, issue and PR templates, `docs/lots/TEMPLATE.md`, `docs/DECISIONS.md`, `.markdownlint-cli2.jsonc`, `.coderabbit.yaml`, `.github/workflows/harness.yml`, `.github/workflows/harness-sync.yml` | seed | Project: created if missing, never rewritten (except the `@vX.Y.Z` references of `harness.yml`) |
 | `.harness/VERSION`, `.harness/lock` | generated | Version, harness commit, checksums of the copied files |
 | `.github/workflows/harness-relay.yml` | refbump only | Project, **on the default branch**, only when it is not the integration branch: never created by the sync, which only pins the references of a copy kept on the integration branch ([below](#integration-branch-that-is-not-the-default-branch)) |
 
@@ -185,6 +185,7 @@ Other keys, read by the hooks and the skills (missing: default values):
 | `default_branch_check` | `true` | When `integration_branch` is not the repository's default branch (GitHub runs `issues`, `issue_comment`, `pull_request_target` and `schedule` workflows from the default branch only), a first adoption stops and later syncs, the session start and `pr-hygiene.yml` print a 🟠 warning ([above](#integration-branch-that-is-not-the-default-branch)); `false` does neither (the adoption says once what will not run) |
 | `merge_gate.required_labels`, `merge_gate.security_labels`, `merge_gate.body_lines` | `[]`, `["type: security"]`, `["issue", "claim", "docs"]` | Merge gate (`merge-gate.py`, [CONVENTIONS](CONVENTIONS.md) §Pull requests): labels a PR needs before merge, labels that block until the operator decides, PR body lines checked; `[]` leaves the line out |
 | `ledger.enabled`, `ledger.label`, `ledger.fold_command` | `false`, `"ledger"`, `""` | Ledger ([CONVENTIONS](CONVENTIONS.md) §Ledger): `### Ledger` section of the PRs (the entry), label the steward marks `<label>: done`, the steward's fold command |
+| `coderabbit.agent_requests_review` | `false` | `true`: `/review-round` posts `@coderabbitai review` itself, once per ready head the bot has not reviewed, never on a draft ([REVIEW-SERVICE](REVIEW-SERVICE.md#5-coderabbit-in-a-harness-project) §5); `false`: it asks the operator |
 
 `.harness/config.json` is a project file (created once): a key added by a new version of the harness does not add
 itself to it; without it, the default applies.
