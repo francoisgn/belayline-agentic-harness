@@ -12,6 +12,7 @@ Why this mechanism (vendoring + plugin + reusable workflows) and its limits: [AD
 | `.harness/labels.json` | copy | Harness: canonical taxonomy |
 | `.harness/LICENSE` | copy | Harness: its licence (MIT), which accompanies the copied files; says nothing about the project's licence |
 | `.harness/hooks/guard-git.py`, `session-start.sh` | copy | Harness |
+| `.harness/hooks/pre-commit-secrets.sh` | copy | Harness: optional git pre-commit secret scan (gitleaks when installed), never installed by the sync ([CI-BUDGET](CI-BUDGET.md#3-security-baseline) §3) |
 | `.claude/skills/<skill>/SKILL.md` | copy | Harness (`/intent`, `/lot-start`, `/lot-finish`, `/review-round`, `/feedback-triage`, `/lessons-check`, `/lesson-propose`, `/compliance-review`, `/status-report`, `/harness-update`) |
 | `.claude/agents/*.md` | copy | Harness: `adversarial-reviewer`, `issue-steward`, `doc-steward`, `flow-monitor`, `compliance-*` (exclude the compliance frameworks you do not need) |
 | `.harness/scripts/flow-metrics.py` | copy | Harness: flow dashboard (`flow-report.yml`, `/status-report`) |
@@ -25,6 +26,7 @@ Why this mechanism (vendoring + plugin + reusable workflows) and its limits: [AD
 | `.claude/settings.json` | merge | Project; the harness only **adds** its two hooks if they are missing |
 | `CLAUDE.md`, `AGENTS.md` | marked block | Project, except the block `<!-- harness:begin harness -->…<!-- harness:end harness -->` |
 | `.harness/config.json`, `.github/labels.local.json`, issue and PR templates, `docs/lots/TEMPLATE.md`, `docs/DECISIONS.md`, `.markdownlint-cli2.jsonc`, `.github/workflows/harness.yml`, `.github/workflows/harness-sync.yml` | seed | Project: created if missing, never rewritten (except the `@vX.Y.Z` references of `harness.yml`) |
+| `.gitignore` | one line added | Project: the sync adds `**/.claude/settings.local.json` once at the end (created if missing); a tracked file or a `!` line is only reported |
 | `.harness/VERSION`, `.harness/lock` | generated | Version, harness commit, checksums of the copied files |
 | `.github/workflows/harness-relay.yml` | refbump only | Project, **on the default branch**, only when it is not the integration branch: never created by the sync, which only pins the references of a copy kept on the integration branch ([below](#integration-branch-that-is-not-the-default-branch)) |
 
@@ -70,6 +72,8 @@ to the session; on the Mac: `gh auth login && gh auth setup-git`).
      (1280×640). Images missing: an issue, they can follow the adoption.
 5. **Verify**: `../belayline/scripts/harness-sync.sh --target . --check` exits with 0; `git diff --stat` shows
    only what is expected; start a Claude session and see the "Belayline" message at startup.
+   Secrets: check `/permissions` for approved commands that carry a key, and revoke any secret already pushed
+   (`.claude/settings.local.json` in the history, [CI-BUDGET](CI-BUDGET.md#3-security-baseline) §3).
 6. **Single commit**, then draft PR:
    `Belayline 0.3.0: adoption` (body: what was removed from `CLAUDE.md`, workflows replaced, labels
    moved; no `### Ledger`: tooling).
