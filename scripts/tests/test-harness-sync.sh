@@ -56,6 +56,14 @@ ok "first sync: block, docs, skills, hooks, JSON merge, refbump"
 [ "$(run --check)" = 0 ] || fail "--check after sync"
 ok "idempotence and --check"
 
+# CodeRabbit template (REVIEW-SERVICE.md §3): seeded once with one review per ready head, never rewritten after.
+grep -qE '^ +auto_incremental_review: false' "$T/.coderabbit.yaml" 2>/dev/null \
+  && grep -qE '^ +drafts: false' "$T/.coderabbit.yaml" || fail ".coderabbit.yaml not seeded with drafts and incremental review off"
+printf 'reviews:\n  profile: assertive\n' >"$T/.coderabbit.yaml"
+[ "$(run)" = 0 ] && [ "$(cat "$T/.coderabbit.yaml")" = "$(printf 'reviews:\n  profile: assertive')" ] \
+  || fail ".coderabbit.yaml of the project rewritten by the sync"
+ok ".coderabbit.yaml seeded once, never rewritten"
+
 # The relay belongs on the default branch: the sync never creates it, but pins the references of a copy kept here.
 RELAY_TPL="$ROOT/templates/.github/workflows/harness-relay.yml"
 RELAY="$T/.github/workflows/harness-relay.yml"
