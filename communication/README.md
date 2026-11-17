@@ -3,7 +3,7 @@
 Everything Belayline publishes outside the repository, and the identity that ties it together.
 
 - [`identity.md`](identity.md): the visual identity and the voice (palette, type, motifs, formats, rules for figures),
-  and what to update together when it changes.
+  and what to update together when it changes. Latest review: [identity-review-2026-11-17.md](identity-review-2026-11-17.md).
 - [`posts/`](posts/): one folder per post, named `YYYY-MM-<topic>`: the text as published (or ready to paste), the
   carousel and visuals, the sources of every figure, the results and a short review.
 
