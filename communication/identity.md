@@ -24,8 +24,7 @@ carry the brand in one register; in the other, orange means a person and blue me
 
 ### Colour code of the diagram register
 
-
-Every colour means the same thing in every post and diagram. Stroke, then pale fill.
+In this register every colour means the same thing, in every diagram and slide. Stroke, then pale fill.
 
 | Meaning | Stroke | Fill | Used for |
 |---|---|---|---|
