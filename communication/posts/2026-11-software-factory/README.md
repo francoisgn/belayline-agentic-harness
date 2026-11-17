@@ -1,14 +1,14 @@
 # LinkedIn, November 2026: the software factory as a motorway
 
-Status: ready to publish (week of 2026-11-17). Author: the operator. Figures as of **2026-11-16**: re-measure them
+Status: **draft**, not published; its white sketch carousel waits for the identity decision ([identity](../../identity.md)). Author: the operator. Figures as of **2026-11-16**: re-measure them
 (below) if the post goes out later.
 
 | File | What |
 |---|---|
 | [`carousel.pdf`](carousel.pdf) | Carousel, 8 slides, 1080 × 1350 (LinkedIn "document" post) |
 | [`carousel-cover.png`](carousel-cover.png) | Its first slide, as a preview |
-| [`motorway.png`](motorway.png) | The motorway picture, 3000 px wide (source: [`factory-motorway`](../../diagrams/factory-motorway.svg)) |
-| [`ai-layers.png`](ai-layers.png) | The four layers of AI, 3000 px wide (source: [`ai-stack`](../../diagrams/ai-stack.svg)), for a later post |
+| [`motorway.png`](motorway.png) | The motorway picture, 3000 px wide (source: [`factory-motorway`](../../../docs/diagrams/factory-motorway.svg)) |
+| [`ai-layers.png`](ai-layers.png) | The four layers of AI, 3000 px wide (source: [`ai-stack`](../../../docs/diagrams/ai-stack.svg)), for a later post |
 
 ## The post (paste as is)
 
