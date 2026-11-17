@@ -5,6 +5,10 @@ moving to this version.
 
 ## Unreleased
 
+- **Identity, direction A** ([communication/identity.md](communication/identity.md)): the navy brand signs (banner,
+  social preview, first and last carousel pages), the white page explains; Inter for both; rules of use and a carousel
+  template. Banner and social preview: small capitals enlarged, halo lightened. Post ready: Belayline 0.4.0.
+  **Action**: none.
 - **Communication** ([communication/](communication/README.md)): posts and identity in one folder. Each post keeps
   its text, carousel, visuals, the sources of its figures, its results and a short review: the launch post (published)
   and the software factory post (draft). `identity.md` records the brand register (navy, Inter, compass) and the
