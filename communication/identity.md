@@ -4,11 +4,27 @@ One look and one voice across the README, the social preview, every post, carous
 recognises Belayline at a glance and the figures can be trusted. An identity is worked on step by step: it may evolve,
 but when it does, everything listed under [When the identity changes](#when-the-identity-changes) moves together.
 
-> **Status (2026-11-17): under review.** Two registers coexist and do not agree yet (below). A design-language analysis
-> and a choice of direction are pending; until then, covers and brand assets use the brand register, explanations and
-> diagrams the diagram register, and no new register is introduced.
+> **Direction A, "two layers" (decided by the operator on 2026-11-17).** The navy brand signs, the white page
+> explains. Inter is the type of both. Analysis and alternatives: [identity-review-2026-11-17.md](identity-review-2026-11-17.md).
 
-## The two registers in use
+## Rules of use
+
+| | Navy (brand layer) | White (explanation layer) |
+|---|---|---|
+| Where | README banner, GitHub social preview, the first and last pages of a carousel, a standalone announcement image | Every page that explains: diagram, figures, comparison, list |
+| Says | The name, the promise, the link. Never a diagram or a figure | One idea per page; at most four numbers; body text at most two lines per item |
+| Colour | Navy gradient, cyan `#42d5e3` and amber `#e8a94e`, decorative, without meaning | The colour code below, one colour = one meaning; brand cyan and amber are never used; no free emphasis colour |
+| Type | Inter 800 titles, Inter body, off-white `#f5f0e6` | Inter 800 titles in navy ink `#10182c`, Inter body `#1e1e1e`; Excalifont only inside diagrams |
+| Mark | The compass, large, from `docs/assets/social-preview.svg`; no halo or grid behind text | The compass chip (two rings and a needle, navy ink, strokes of 3 px) and "Belayline" bottom left, page number bottom right |
+
+Carousel checklist: the subject in the first 30 characters of the LinkedIn document title; the top left of page 1
+left free (LinkedIn lays its title strip there); no useful text under ~28 px on a 1080 px page; never a landscape
+diagram shrunk into a portrait page (crop it into zoomed pages, or make a portrait variant); at most one two-colour
+"X. / Y." title per carousel. Template: [`templates/carousel-direction-a.py`](templates/carousel-direction-a.py)
+(standard library; it writes the HTML, a headless browser prints it to PDF; see its use in
+[2026-11-release-0.4.0](posts/2026-11-release-0.4.0/README.md)).
+
+## The two registers
 
 | | Brand register | Diagram register |
 |---|---|---|
@@ -19,8 +35,8 @@ but when it does, everything listed under [When the identity changes](#when-the-
 | Motif | A compass with a dashed amber trajectory between waypoints | Hand-drawn boxes, arrows and scenes (the layers, the motorway) |
 | Sources | `docs/assets/banner.svg`, `docs/assets/social-preview.svg` | `docs/diagrams/*.excalidraw` with their stamped `.svg` |
 
-Known contradictions: the background (navy vs white), the type (Inter vs Excalifont), and the colours (cyan and amber
-carry the brand in one register; in the other, orange means a person and blue means agents).
+Direction A resolves the contradictions found on 2026-11-17: each background has its role, Inter is shared, and the brand
+cyan and amber stay on navy while the colour code stays on white.
 
 ### Colour code of the diagram register
 
@@ -80,4 +96,5 @@ published), the carousel and the images. One row in [the index](README.md).
 |---|---|
 | 2026-11 (0.3.0 → 0.4.0) | Brand register: navy banner and social preview with the compass |
 | 2026-11-11 | Launch carousel in the brand register |
-| 2026-11-17 | Diagram register written down; both registers recorded; direction under review |
+| 2026-11-17 | Diagram register written down; both registers recorded; identity review |
+| 2026-11-17 | Direction A decided; Inter shared; banner and social preview: small capitals enlarged (15 and 17 px), halo lightened |
