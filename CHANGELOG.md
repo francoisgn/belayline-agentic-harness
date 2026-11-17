@@ -5,6 +5,9 @@ moving to this version.
 
 ## Unreleased
 
+- **Posts** ([docs/posts/](docs/posts/README.md)): the LinkedIn post on the software factory as a motorway, its
+  carousel and visuals, and the sources of its figures; the 0.4.0 release update. **Action**: none.
+
 ## 0.4.0 — 2026-11-15
 
 First release under the name **Belayline** (repository `francoisgn/belayline-agentic-harness`). Before 1.0.0 a MINOR
