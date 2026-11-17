@@ -5,9 +5,11 @@ moving to this version.
 
 ## Unreleased
 
-- **Posts** ([docs/posts/](docs/posts/README.md)): the LinkedIn post on the software factory as a motorway, its
-  carousel and visuals, and the sources of its figures; the 0.4.0 release update; a style guide (`docs/posts/STYLE.md`: palette with one meaning per colour,
-  font, formats, voice, sources of figures). **Action**: none.
+- **Communication** ([communication/](communication/README.md)): posts and identity in one folder. Each post keeps
+  its text, carousel, visuals, the sources of its figures, its results and a short review: the launch post (published)
+  and the software factory post (draft). `identity.md` records the brand register (navy, Inter, compass) and the
+  diagram register (white, Excalifont, one colour per meaning), and what to update together when the identity
+  changes. **Action**: none.
 
 ## 0.4.0 — 2026-11-15
 
