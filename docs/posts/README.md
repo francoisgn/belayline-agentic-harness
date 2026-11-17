@@ -1,7 +1,7 @@
 # Posts
 
 Public posts about Belayline (LinkedIn and others): the text ready to paste, the carousel, the visuals, and where every
-figure comes from. One folder per post, named `YYYY-MM-<topic>`.
+figure comes from. One folder per post, named `YYYY-MM-<topic>`. Look and voice: [STYLE.md](STYLE.md).
 
 | Post | Date | Topic |
 |---|---|---|
