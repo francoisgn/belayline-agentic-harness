@@ -31,6 +31,18 @@ flowchart LR
 - **Avoid cold context**: a restarted agent does not reread the whole repository. Its prompt gives it exactly the
   useful files and issues (the brief, ORCHESTRATION §4); docs stay short and structured so they read fast
   (ESSENTIALS.md first, detail on demand).
+- **The cache, not the length, sets the price of a long session.** Most of a session's tokens are its context
+  re-read at every turn; while the prompt cache is warm that re-read is cheap, and the cost jumps when the cache has
+  expired and the whole history is written again. Measured by [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis) (read
+  2026-11-18; Opus 5.5, Claude Code 2.1.325, 5-minute cache, n=2 to 5 per arm): the same small fix on a ~97k-token
+  session cost about 1.5 times a fresh session with the cache warm, about 10 times after it expired; a fresh session
+  given three lines (goal, done, next) cost about 1 time. Cache lifetime: 5 minutes on an API key, 1 hour on a
+  subscription within its limits ([prompt caching](https://code.claude.com/docs/en/prompt-caching)). Hence:
+  - after a wait longer than the cache (PR events, `send_later`, quota reset), the orchestrator **resumes from its
+    State comment** in a fresh or cleared session, not by continuing the long one; or it compacts **before** the wait;
+  - **tool output stays short**: the failing tests and the last lines of a log, not the whole log. Everything that
+    enters the chat is re-read at every later turn (+15 % to +64 % over the next six turns for a 750- to 5,000-token
+    log in the same study, preliminary).
 
 ## 2. Model routing: neither over- nor under-assignment
 
@@ -71,6 +83,9 @@ Rules:
 - **Quota reached (tokens or minutes)**: the orchestrator writes the state on every issue in progress ("Handoff: …"),
   schedules its resumption at the reset time (e.g. Claude Code: `send_later`; or a scheduled task, never a wait loop)
   and stops cleanly. On resuming: reread the repository state (L18, L19), not its memory.
+- **Subagents keep their cache 5 minutes** unless `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h` (Claude Code). A child or
+  reviewer that waits on CI for longer pays the rebuild of its context; one that only waits should end and be started
+  again with its brief (§1).
 - **CI minutes exhausted**: local checks before every merge (`local-check.sh`, which says "INCOMPLETE" when a tool is
   missing), CI-BUDGET §2.
 - **Bounded loops** (after the repair loop of OpenHarness, [`autopilot/service.py`](https://github.com/HKUDS/OpenHarness/blob/main/src/openharness/autopilot/service.py), `repair max_rounds`, read on 2026-11-07):
@@ -121,6 +136,11 @@ The problem-PR ratio also feeds routing (§2 rule 3): a model tier whose PRs oft
 findings is under-assigned for that type of task. What the script does not
 see (tokens consumed per session) is read by hand in the provider's console and carried into the
 orchestrator's weekly report.
+
+**Token usage stays outside the dashboard** ([.out-of-scope](../.out-of-scope/token-cost-accounting.md)). An operator who
+wants their own figures for Claude Code can run [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis) on
+`~/.claude/projects`: it works locally, needs no API key and reads token counts and timestamps, not the text of the
+chats. Optional, not vendored.
 
 ## 5. What reviews are worth: the data, not a metric
 

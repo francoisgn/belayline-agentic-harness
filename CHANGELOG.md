@@ -5,6 +5,11 @@ moving to this version.
 
 ## Unreleased
 
+- **The prompt cache as a cost lever** ([FINOPS](docs/FINOPS.md) §1, §3, §4, #146): most of a session's tokens are
+  its context re-read; the price jumps when the cache has expired (about 10 times a fresh session in one public
+  study). The orchestrator resumes from its State comment after a wait longer than the cache, tool output stays
+  short, subagents keep their cache 5 minutes, and a local usage analyser is cited as an operator option (the
+  out-of-scope note on token accounting updated, decision unchanged). **Action**: none.
 - **Spec Kit and Superpowers, discovery and UI checks placed** ([POSITIONING §3](docs/POSITIONING.md),
   [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [METHODOLOGY](docs/METHODOLOGY.md) §2 ter.6,
   #143, #144, #145): Spec Kit added to the peers; the Superpowers row corrected after a second read (specs and plans
