@@ -95,13 +95,15 @@ This is the split described in [ORCHESTRATION](ORCHESTRATION.md) and [FINOPS](FI
 | [latintzar/harness](https://github.com/latintzar/harness) | Application platform | A Codex-based harness with generative UI for business "verticals": scoped files, approvals, spend accounting | MIT |
 | [arXiv 2610.25568](https://arxiv.org/html/2610.25568v1) | Research | A planner, worker and reviewer harness evaluated on four benchmarks (Spine AI, 18 Oct 2026) | CC BY 4.0 |
 
-Five widely used agent-instruction projects, each read on 2026-11-15 from its own repository (README and licence).
+Six widely used agent-instruction projects, each read from its own repository (README and licence): five on
+2026-11-15, Spec Kit on 2026-11-18, when Superpowers was read again.
 They are not harnesses in the sense above, and we cite no popularity figure. One line each:
 
 | Project | What it says it does | How Belayline differs |
 |---|---|---|
 | [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) | "Skills for Real Engineers": small, composable skills such as `/grill-me`, `/tdd`, `/diagnosing-bugs`, for several agents | Skills the developer calls by hand; Belayline adds the process around them: intent, an isolated review, traced verdicts, bounded loops |
-| [obra/superpowers](https://github.com/obra/superpowers) (MIT) | "A complete software development methodology for your coding agents": questions, design, plan, then subagents that review each other's work, with TDD skills | The closest in spirit, a methodology in skills; it works inside one session, while Belayline keeps plan and state in the repository and requires a reviewer of another model |
+| [obra/superpowers](https://github.com/obra/superpowers) (MIT) | "A complete software development methodology for your coding agents": questions to tease out a spec, design, plan, then subagents that implement and review each task, with TDD skills | The closest in spirit, a methodology in skills. Its brainstorming covers discovery, which Belayline leaves out (it starts at a ready issue), so it can run upstream of `/intent`. Specs and plans are written to the repository, but nothing reaches GitHub: no issues, labels, PR template, CI or measurement. The reviewer model is chosen by the diff's risk, with no rule that it differs from the author's; fix loops go up to five rounds |
+| [github/spec-kit](https://github.com/github/spec-kit) (MIT) | "Structured processes, reusable templates, and documented outcomes" for coding agents: spec-driven development (constitution, specify, plan, tasks, implement, converge), plus bug-fixing and idea-assessment extensions | A process that owns each step of a feature, which `SCOPE.md` leaves to a dedicated framework. Its spec maps to an issue's intent; its optional assessment extension (go, clarify or stop) is one way to do discovery before an issue exists. Belayline adds what happens around the code: a reviewer of another model, traced verdicts, CI and the flow measures |
 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT; the older `forrestchang` address redirects here) | A single `CLAUDE.md` of four principles drawn from Andrej Karpathy's remarks on LLM coding mistakes | A style guide for one agent's behaviour; Belayline does not tune how the author writes, it checks the result |
 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) (MIT) | A prompt that makes the agent write less code: a ladder from "is it needed" down to the minimum, plus review and audit commands | A conciseness rule for the author; Belayline's review asks whether the change does what the issue asked, not how short it is |
 | [affaan-m/ECC](https://github.com/affaan-m/ECC) (MIT) | "A coordinated engineering system and toolbox" for coding agents: planning, verification, review, memory, many agents and skills, adapters for several harnesses | A large toolbox installed per developer; Belayline is small by design (`SCOPE.md`) and its state lives in issues and PRs, not in the tool |
@@ -207,10 +209,14 @@ All read 2026-11-10.
 Read 2026-11-15:
 
 - https://github.com/mattpocock/skills
-- https://github.com/obra/superpowers
+- https://github.com/obra/superpowers (read again 2026-11-18)
 - https://github.com/multica-ai/andrej-karpathy-skills
 - https://github.com/DietrichGebert/ponytail
 - https://github.com/affaan-m/ECC
+
+Read 2026-11-18:
+
+- https://github.com/github/spec-kit
 
 Not read, blocked by a Cloudflare challenge: the Medium article "How to build an agent harness that decides in 0.65
 seconds", and Dave Rensin's essay credited by the Elephant–Goldfish Model.
