@@ -4,7 +4,9 @@ name: Rules check (reusable)
 # Apache-2.0): rules in `stele.md`, a regex or checker per rule, `stele check` in CI (POSITIONING.md §3,
 # ADOPTION.md §Plugging a step). Optional: a project with no `stele.md`, `stele.json` or `stele.lock` gets a notice
 # and a green job, with nothing installed. stele is built from source at a pinned version (`go install`); its hooks
-# for the agent are the project's choice and are not set up here. Nothing runs on a draft.
+# for the agent are the project's choice and are not set up here. Built-in regex rules only: checker plugins
+# (opengrep, trivy) and shared rules from a private repository need their tool or a credential this job does not
+# provide, and stele then exits 2. Nothing runs on a draft.
 on:
   workflow_call:
     inputs:
@@ -36,11 +38,23 @@ jobs:
 
       - name: Rules present?
         id: rules
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           if [ -e stele.md ] || [ -e stele.json ] || [ -e stele.lock ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          removed=""
+          if [ -n "$BASE_REF" ]; then
+            for f in stele.md stele.json stele.lock; do
+              git cat-file -e "origin/${BASE_REF}:${f}" 2>/dev/null && removed="$removed $f"
+            done
+          fi
+          if [ -n "$removed" ]; then
+            echo "::warning title=Rules check::this branch removes the rules file(s):${removed}; nothing is checked any more"
           else
-            echo "present=false" >> "$GITHUB_OUTPUT"
             echo "::notice title=Rules check::no stele.md, stele.json or stele.lock: nothing to check (ADOPTION.md §Plugging a step)"
           fi
 
@@ -55,6 +69,10 @@ jobs:
         env:
           STELE_VERSION: ${{ inputs.stele-version }}
         run: |
+          if ! printf '%s' "$STELE_VERSION" | grep -Eqx 'v[0-9]+\.[0-9]+\.[0-9]+'; then
+            echo "::error title=Rules check::stele-version must be a release tag such as v1.5.1, not '${STELE_VERSION}'"
+            exit 2
+          fi
           go install "github.com/lictor-ai/stele/cmd/stele@${STELE_VERSION}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 

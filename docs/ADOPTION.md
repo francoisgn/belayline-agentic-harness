@@ -279,7 +279,7 @@ The loop starts at a ready issue and ends at a merged PR. Steps outside it stay 
 | Step | Where it plugs | Contract with the loop | Examples |
 |---|---|---|---|
 | Discovery (framing a fuzzy need) | before `/intent` | its output is an issue that meets [METHODOLOGY](METHODOLOGY.md) §2 bis; a missing answer becomes `status: needs-decision` | a PO workshop; Superpowers' brainstorming; Spec Kit's assessment extension |
-| Rule checker (mechanical rules) | at each write (agent hooks) and in CI, before the reviews | a broken rule fails the PR's check; the rules are the project's, in its own file | [stele](https://github.com/lictor-ai/stele): `stele.md` + the `rules` job of `harness.yml` (`rules-check.yml`, green with a notice while the project has no `stele.md`); its hooks via `stele init`, the project's choice |
+| Rule checker (mechanical rules) | at each write (agent hooks) and in CI, before the reviews | a broken blocking rule fails the PR's check; the rules are the project's, in its own file; built-in regex rules only (no checker plugin, no shared rules from a private repository) | [stele](https://github.com/lictor-ai/stele): `stele.md` + the `rules` job of `harness.yml` (`rules-check.yml`, green with a notice while the project has no `stele.md`); its hooks via `stele init`, the project's choice |
 | UI or end-to-end verification | after green tests, before the reviews | its result is a line under "Verified" or "Watch points / not tested" in the PR ([METHODOLOGY](METHODOLOGY.md) §2 ter.6) | a Playwright script, a simulator run, the Mac report ([MAC-HANDOFF](MAC-HANDOFF.md)) |
 
 Each is a project skill, agent or CI job under its own name: nothing to exclude, nothing vendored to edit. Why the
