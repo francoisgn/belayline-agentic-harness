@@ -95,6 +95,14 @@ jobs:
   #   with:
   #     semgrep-configs: "p/default p/secrets p/github-actions"   # + p/swift, p/python…
 
+  # Rules check (ADOPTION.md §Plugging a step; needs a harness version that has rules-check.yml): the project's
+  # mechanical rules in stele.md, checked by stele on the PR's changed files; without stele.md, a notice and green.
+  # rules:
+  #   if: github.event_name == 'pull_request' && !contains(fromJSON('["edited", "labeled", "unlabeled", "closed"]'), github.event.action)
+  #   permissions:
+  #     contents: read
+  #   uses: francoisgn/belayline-agentic-harness/.github/workflows/rules-check.yml@v0.4.0
+
   # AI review service (REVIEW-SERVICE.md): secret ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN; never required.
   # review:
   #   if: github.event_name == 'pull_request' && !contains(fromJSON('["edited", "labeled", "unlabeled", "closed"]'), github.event.action)
