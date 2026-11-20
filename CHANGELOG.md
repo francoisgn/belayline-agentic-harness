@@ -6,10 +6,11 @@ moving to this version.
 ## Unreleased
 
 - **The prompt cache as a cost lever** ([FINOPS](docs/FINOPS.md) §1, §3, §4, #146): most of a session's tokens are
-  its context re-read; the price jumps when the cache has expired. Measured on three orchestrators: rebuilds after
-  a wait longer than the cache are 30–34 % of usage on a cloud one woken every ~100 min, under 6 % on a Mac one woken
-  every ~55 min, where subagents are 73–81 % (#147); a public study's ratios are cited as orders of magnitude, not
-  facts. Scheduled wake-ups land inside the cache lifetime, else the orchestrator resumes from its State comment, tool output stays
+  its context re-read; the price jumps when the cache has expired. Three measures: rebuilds after a wait longer
+  than the cache are 30–34 % of usage on a cloud orchestrator (79 waits over 1 h, its own container only) and under
+  6 % on a Mac orchestrator whose waits end inside its 1-hour cache; there, subagents are 73 % of usage (#147). A
+  public study's ratios are cited as orders of magnitude, not facts. Scheduled wake-ups land inside the cache
+  lifetime, else the orchestrator resumes from its State comment in a fresh context, tool output stays
   short, subagents keep their cache 5 minutes, and a local usage analyser is cited as an operator option (the
   out-of-scope note on token accounting updated, decision unchanged). **Action**: none.
 - **Spec Kit and Superpowers, discovery and UI checks placed** ([POSITIONING §3](docs/POSITIONING.md),

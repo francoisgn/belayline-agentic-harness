@@ -34,13 +34,17 @@ flowchart LR
 - **The cache, not the length, sets the price of a long session.** Most of a session's tokens are its context
   re-read at every turn; while the prompt cache is warm that re-read is cheap, and the cost jumps when the cache has
   expired and the whole history is written again. Cache lifetime: 5 minutes on an API key, 1 hour on a subscription
-  within its limits, 5 minutes for subagents ([prompt caching](https://code.claude.com/docs/en/prompt-caching)).
-  - **Measured here** ([#146](https://github.com/francoisgn/belayline-agentic-harness/issues/146), 2026-11-18, three
-    orchestrators, local analyser below): reads are 96–98 % of tokens but only 40–50 % of usage. Rebuilds after a
-    wait longer than the cache are **30–34 % of usage** for a cloud orchestrator whose scheduled passes came every
-    ~100 minutes (79 rebuilds of a ~400k-token context in 14 days), and **0.3–5.4 %** for a Mac orchestrator that
-    wakes every ~55 minutes, inside its 1-hour cache (1 miss in 324 waits of 5 to 60 minutes). On the Mac,
-    **subagents are 73–81 % of usage** and are the larger line (#147).
+  within its limits, 5 minutes for subagents ([prompt caching](https://code.claude.com/docs/en/prompt-caching), read
+  2026-11-19).
+  - **Measured here** ([#146](https://github.com/francoisgn/belayline-agentic-harness/issues/146), 2026-11-18 and
+    2026-11-19, three measures: a cloud orchestrator, a Mac orchestrator and another Mac project; local analyser of §4
+    at commit `e9451a4`). Usage is the analyser's weighting by API price (input 1, cache write 1.25 for 5 minutes and
+    2 for 1 hour, read 0.05, output 5); how it maps to a subscription's quota is not in the logs. Reads are 96–98 % of
+    tokens but only 40–50 % of usage. Rebuilds after a wait longer than the cache are **30–34 % of usage** for the
+    cloud orchestrator (79 waits over 1 hour in 14 days, median 103 minutes, each rewriting a ~400k-token context;
+    its own container only, its child sessions are not counted), and **0.3–5.4 %** for the Mac orchestrator, whose
+    waits mostly end before its 1-hour cache does (1 miss in 324 waits of 5 to 60 minutes). On the Mac,
+    **subagents are 73 % of usage** for the orchestrator and 81 % for the other project, the larger line (#147).
   - **Not measured here**, cited from [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis)
     (read 2026-11-18; Opus 5.5, API key with a 5-minute cache, a ~97k-token session, n=2 to 5 per arm): the same
     small fix cost about 1.5 times a fresh session with the cache warm and about 10 times after it expired; a fresh
@@ -50,11 +54,14 @@ flowchart LR
 
   Hence:
   - a **scheduled wake-up lands inside the cache lifetime** (about 55 minutes on a 1-hour cache) when the
-    orchestrator has work to look at; when the next pass is further away, it **resumes from its State comment** in a
-    fresh or cleared session instead of continuing the long one, or compacts **before** the wait;
+    orchestrator has work to look at. When the next pass is further away, it writes its State comment and
+    **resumes from it in a fresh context**: `/clear` then the resuming procedure of
+    [ORCHESTRATION](ORCHESTRATION.md) §8, or a scheduled task that starts a new session; otherwise it compacts
+    **before** the wait;
   - **tool output stays short**: the failing tests and the last lines of a log, not the whole log; everything that
-    enters the chat is re-read at every later turn.
-  - check the effect with the analyser (§4) before and after a change of cadence, not from the study's ratios.
+    enters the chat is re-read at every later turn;
+  - the effect of a change of cadence is checked with the analyser (§4), before and after, not taken from the
+    study's ratios.
 
 ## 2. Model routing: neither over- nor under-assignment
 
@@ -94,7 +101,8 @@ Rules:
   when it runs low.
 - **Quota reached (tokens or minutes)**: the orchestrator writes the state on every issue in progress ("Handoff: …"),
   schedules its resumption at the reset time (e.g. Claude Code: `send_later`; or a scheduled task, never a wait loop)
-  and stops cleanly. On resuming: reread the repository state (L18, L19), not its memory.
+  and stops cleanly. On resuming: reread the repository state (L18, L19), not its memory. A reset usually comes after
+  the cache has expired: resume in a fresh context from the State comment (§1), not in the long session.
 - **Subagents keep their cache 5 minutes** unless `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h` (Claude Code). A child or
   reviewer that waits on CI for longer pays the rebuild of its context; one that only waits should end and be started
   again with its brief (§1).
@@ -150,7 +158,8 @@ see (tokens consumed per session) is read by hand in the provider's console and 
 orchestrator's weekly report.
 
 **Token usage stays outside the dashboard** ([.out-of-scope](../.out-of-scope/token-cost-accounting.md)). An operator who
-wants their own figures for Claude Code can run [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis) on
+wants their own figures for Claude Code can run [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis) (used at
+commit `e9451a4` for #146) on
 `~/.claude/projects`: it works locally, needs no API key and reads token counts and timestamps, not the text of the
 chats. Optional, not vendored.
 
