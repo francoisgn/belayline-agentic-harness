@@ -1,0 +1,70 @@
+name: Rules check (reusable)
+
+# The project's mechanical rules, checked on the PR's changed files by stele (github.com/lictor-ai/stele,
+# Apache-2.0): rules in `stele.md`, a regex or checker per rule, `stele check` in CI (POSITIONING.md §3,
+# ADOPTION.md §Plugging a step). Optional: a project with no `stele.md`, `stele.json` or `stele.lock` gets a notice
+# and a green job, with nothing installed. stele is built from source at a pinned version (`go install`); its hooks
+# for the agent are the project's choice and are not set up here. Nothing runs on a draft.
+on:
+  workflow_call:
+    inputs:
+      stele-version:
+        description: stele tag to build (go install ...@<tag>); pin it, never `latest`
+        type: string
+        default: v1.5.1
+      go-version:
+        description: Go toolchain for the build (stele needs 1.27 or later)
+        type: string
+        default: "1.27"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Rules · stele check
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0   # --base needs the merge base
+
+      - name: Rules present?
+        id: rules
+        run: |
+          if [ -e stele.md ] || [ -e stele.json ] || [ -e stele.lock ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Rules check::no stele.md, stele.json or stele.lock: nothing to check (ADOPTION.md §Plugging a step)"
+          fi
+
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        if: steps.rules.outputs.present == 'true'
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache: false   # no shared cache: nothing a PR could poison
+
+      - name: Build stele
+        if: steps.rules.outputs.present == 'true'
+        env:
+          STELE_VERSION: ${{ inputs.stele-version }}
+        run: |
+          go install "github.com/lictor-ai/stele/cmd/stele@${STELE_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: stele check
+        if: steps.rules.outputs.present == 'true'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ -n "$BASE_REF" ]; then
+            stele check --base "origin/${BASE_REF}"
+          else
+            stele check --all
+          fi

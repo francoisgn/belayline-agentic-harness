@@ -49,7 +49,7 @@ env -u GH_TOKEN -u GITHUB_TOKEN python3 "$T/.harness/scripts/orch-state.py" --ro
 python3 "$T/.harness/scripts/job-timeout.py" --root "$T" >"$WORK/timeout" 2>&1 || fail "job-timeout.py not vendored or failing on the seeded workflows: $(cat "$WORK/timeout")"
 PIN="$(git -C "$ROOT" rev-parse HEAD 2>/dev/null) # v$(cat "$ROOT/VERSION")"
 if [ -n "$(git -C "$ROOT" status --porcelain 2>/dev/null)" ] || ! git -C "$ROOT" rev-parse HEAD >/dev/null 2>&1; then PIN="v$(cat "$ROOT/VERSION")"; fi
-[ "$(grep -c "belayline-agentic-harness/.github/workflows/.*@$PIN\$" "$T/.github/workflows/harness.yml")" = 9 ] || fail "refbump ($PIN)"
+[ "$(grep -c "belayline-agentic-harness/.github/workflows/.*@$PIN\$" "$T/.github/workflows/harness.yml")" = 10 ] || fail "refbump ($PIN)"
 ok "first sync: block, docs, skills, hooks, JSON merge, refbump"
 
 [ "$(run)" = 0 ] && grep -q 'Up to date' "$WORK/out" || fail "second sync not idempotent: $(cat "$WORK/out")"

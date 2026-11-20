@@ -5,6 +5,12 @@ moving to this version.
 
 ## Unreleased
 
+- **Rule checker in CI, optional** ([`rules-check.yml`](.github/workflows/rules-check.yml),
+  [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [POSITIONING §3](docs/POSITIONING.md), #150):
+  a project that writes its mechanical rules in `stele.md` gets them checked on each PR by
+  [stele](https://github.com/lictor-ai/stele), built from source at a pinned version; without `stele.md`, the job
+  says so and passes. stele added to the projects looked at. **Action**: none; to use it, uncomment the `rules` job
+  of `harness.yml` and add a `stele.md` (`stele init`).
 - **The prompt cache as a cost lever** ([FINOPS](docs/FINOPS.md) §1, §3, §4, #146): most of a session's tokens are
   its context re-read; the price jumps when the cache has expired. Three measures: rebuilds after a wait longer
   than the cache are 30–34 % of usage on a cloud orchestrator (79 waits over 1 h, its own container only) and under
