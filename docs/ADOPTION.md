@@ -272,6 +272,18 @@ The harness is a **framework**: every building block has an extension point, non
 Rule: **never edit** a vendored copy (the sync refuses it); exclude and replace, or add alongside. A replacement
 useful to everyone goes up to the harness by PR.
 
+## Plugging a step before or after the loop
+
+The loop starts at a ready issue and ends at a merged PR. Steps outside it stay the project's choice:
+
+| Step | Where it plugs | Contract with the loop | Examples |
+|---|---|---|---|
+| Discovery (framing a fuzzy need) | before `/intent` | its output is an issue that meets [METHODOLOGY](METHODOLOGY.md) §2 bis; a missing answer becomes `status: needs-decision` | a PO workshop; Superpowers' brainstorming; Spec Kit's assessment extension |
+| UI or end-to-end verification | after green tests, before the reviews | its result is a line under "Verified" or "Watch points / not tested" in the PR ([METHODOLOGY](METHODOLOGY.md) §2 ter.6) | a Playwright script, a simulator run, the Mac report ([MAC-HANDOFF](MAC-HANDOFF.md)) |
+
+Each is a project skill, agent or CI job under its own name: nothing to exclude, nothing vendored to edit. Why the
+harness ships neither: [SCOPE.md](../SCOPE.md) §Out of scope.
+
 ## Partial adoption
 - **Rules only**: exclude `.github/*` and `docs/lots/*`.
 - **Workflows and labels only**: do not run the sync; call the reusable workflows from the project's

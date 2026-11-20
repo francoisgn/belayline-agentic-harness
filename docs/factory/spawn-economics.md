@@ -45,7 +45,8 @@ Why the sub-agent with a short context and a fitted model is the unit of work:
   calls can be read from a cache, at a fraction of the base input price (0.1 times for most models, less for some),
   and the default cache lifetime is 5 minutes ([prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching),
   read 2026-11-11). Stable instruction files loaded first help; whether a given agent product places them in a
-  cached prefix is its own business, and the harness does not measure it.
+  cached prefix is its own business, and the harness does not measure it. What a cache miss costs a long session,
+  and what the orchestrator does about it: [FINOPS](../FINOPS.md) §1.
 
 **What the orchestrator keeps, what a child receives.** The orchestrator is the only long-lived agent and keeps a
 compressed context: summaries and links to state ([FINOPS](../FINOPS.md) §1). Its memory is one State comment of at

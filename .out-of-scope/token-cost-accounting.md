@@ -10,3 +10,8 @@
   whether an API key or a subscription pays off, or compute a user's return on investment.
 - **What would change the answer:** a consumer project that cannot apply FINOPS routing without per-run usage data
   from the harness itself.
+- **Update 2026-11-18** ([#146](https://github.com/francoisgn/belayline-agentic-harness/issues/146)): for Claude Code,
+  the "needs an API and a secret" objection no longer holds:
+  [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis) reads usage from the
+  local session files, with no secret. The decision stands (the harness does not collect usage; FINOPS §4 points to
+  that tool as an option for the operator), because the observed-failure test is still unmet.

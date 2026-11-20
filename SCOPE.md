@@ -33,6 +33,8 @@ standards a reviewer reads. A rule that is neither does not enter.
 | Language or framework style rules (Swift, Rust, React…) | project knowledge, not method | the project's `CLAUDE.md` / `AGENTS.md` |
 | A full spec-driven process that owns every step | the harness assists a workflow, it does not replace one | a dedicated framework |
 | Product design taste (UI, copy) | needs its own vocabulary and detectors | a design skill |
+| Discovery: framing a need before it is an issue | product practice, not method; the loop starts at a ready issue | a discovery skill or workshop upstream ([ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop)) |
+| A required UI or end-to-end check by an agent | many projects have no UI; it would add a browser or emulator to every project | an optional project step ([METHODOLOGY](docs/METHODOLOGY.md) §2 ter.6) |
 | Anything requiring a paid service to pass a required check | required checks pass without secrets | optional workflow |
 | Rules that cannot be turned off | non-dogmatic by construction | nowhere |
 

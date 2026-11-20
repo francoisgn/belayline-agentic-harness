@@ -23,3 +23,5 @@ Before proposing something, search this folder. Reopening a declined idea is wel
 | [Guard hooks that fail closed](guard-fail-closed.md) | 2026-11-10 |
 | [A "runtime guardrail" building block in ADOPTION](runtime-guardrail-block.md) | 2026-11-10 |
 | [A hard cap on lot size](lot-size-hard-cap.md) | 2026-11-10 |
+| [A discovery phase in the harness](discovery-phase.md) | 2026-11-18 |
+| [A required UI or end-to-end verification step](ui-verification-in-core.md) | 2026-11-18 |

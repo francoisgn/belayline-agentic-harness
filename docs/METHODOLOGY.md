@@ -73,6 +73,12 @@ question; do not code. The issue steward ([STEWARDS](STEWARDS.md) §1) keeps the
    §4). The PR says, under "Verified", which tests were seen red (LESSONS L01).
 5. What cannot be tested automatically (rendering, device) goes under "Watch points / not tested", with the planned
    manual check.
+6. **Optional: UI verification by an agent.** A project with an interface may add a step between green tests and
+   the reviews: its own agent or script (Playwright, simulator, a screenshot the agent reads) checks each UI
+   acceptance criterion through the running app. The result goes under "Verified" in the PR, or else under "Watch
+   points / not tested". The harness ships no such step and requires none: the project adds it as a project skill
+   or a CI job ([ADOPTION](ADOPTION.md#plugging-a-step-before-or-after-the-loop)). The Mac report of
+   [MAC-HANDOFF](MAC-HANDOFF.md) is one instance.
 
 ## 3. Test feedback: umbrella issue + one issue per point
 
