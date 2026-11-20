@@ -42,6 +42,9 @@ A model to write in the project (e.g. `scripts/mac-handoff.sh`). Run on the Mac,
    errors (excerpt), start of the crash log, then the release's **manual checklist**;
    copies it to the clipboard.
 
+This report is one instance of the optional UI verification step ([METHODOLOGY](METHODOLOGY.md) §2 ter.6): its
+results go under "Verified" or "Watch points / not tested" in the PR.
+
 The operator pastes `REPORT.md` into the cloud session, which fixes and pushes again. Rule: a single round trip per
 lot when possible (fix everything in one go).
 

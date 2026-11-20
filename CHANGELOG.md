@@ -15,10 +15,10 @@ moving to this version.
   out-of-scope note on token accounting updated, decision unchanged). **Action**: none.
 - **Spec Kit and Superpowers, discovery and UI checks placed** ([POSITIONING §3](docs/POSITIONING.md),
   [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [METHODOLOGY](docs/METHODOLOGY.md) §2 ter.6,
-  #143, #144, #145): Spec Kit added to the peers; the Superpowers row corrected after a second read (specs and plans
-  in the repository, no GitHub layer, reviewer model chosen by risk). Discovery and an agent-run UI check stay out of
-  the core (`SCOPE.md`, two `.out-of-scope/` files) and get one place to plug in, before `/intent` and after green
-  tests. **Action**: none.
+  #143, #144, #145): Spec Kit added to the peers; the Superpowers row corrected after a second read (specs and plans in
+  the repository, a PR but no issue, CI or verdict layer, reviewer model chosen by risk). Discovery and an agent-run UI
+  check stay out of the core (`SCOPE.md`, two `.out-of-scope/` files) and get one place to plug in, before `/intent` and
+  after green tests. **Action**: none.
 - **Identity, direction A** ([communication/identity.md](communication/identity.md)): the navy brand signs (banner,
   social preview, first and last carousel pages), the white page explains; Inter for both; rules of use and a carousel
   template. Banner and social preview: small capitals enlarged, halo lightened. Post ready: Belayline 0.4.0.
