@@ -69,7 +69,7 @@ jobs:
         env:
           STELE_VERSION: ${{ inputs.stele-version }}
         run: |
-          if ! printf '%s' "$STELE_VERSION" | grep -Eqx 'v[0-9]+\.[0-9]+\.[0-9]+'; then
+          if ! [[ "$STELE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error title=Rules check::stele-version must be a release tag such as v1.5.1, not '${STELE_VERSION}'"
             exit 2
           fi
