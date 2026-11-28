@@ -23,10 +23,19 @@ const pr = JSON.parse(process.env.TEST_PR);
 const context = { payload: { pull_request: pr }, repo: { owner: 'o', repo: 'r' } };
 const github = { paginate: async () => [], rest: { pulls: { listFiles: null },
   issues: { addLabels: async () => ({}) }, repos: { getContent: async () => ({}) } } };
-(async () => {
-%s
-})().then(() => console.log(JSON.stringify(core)), (e) => { console.error(e); process.exit(3); });
+// As actions/github-script v9 runs it: the script is the body of an async function whose parameters are the injected
+// names (dist/index.js callAsyncFunction), so redeclaring one with const/let is a SyntaxError, as on a real runner.
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const fn = new AsyncFunction(%s, %s);
+fn(require, require, github, github, () => { throw new Error('getOctokit stub'); }, context, core, {}, {}, {})
+  .then(() => console.log(JSON.stringify(core)), (e) => { console.error(e); process.exit(3); });
 """
+
+# Parameters actions/github-script@v9.0.0 passes to the script, in its order: the object given to callAsyncFunction in
+# https://github.com/actions/github-script/blob/3a2844b7e9c422d3c10d287c895573f7108da1b3/dist/index.js (lines
+# 65100-65111). The README list ("This action") omits `octokit` and `__original_require__`: the code is the source.
+INJECTED = ["require", "__original_require__", "github", "octokit", "getOctokit", "context", "core", "exec", "glob",
+            "io"]
 
 
 def embedded_script():
@@ -52,7 +61,8 @@ class LedgerCheckTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.js = pathlib.Path(cls.tmp.name) / "run.js"
-        cls.js.write_text(HARNESS % embedded_script(), encoding="utf-8")
+        cls.js.write_text(HARNESS % (", ".join(json.dumps(n) for n in INJECTED), json.dumps(embedded_script())),
+                          encoding="utf-8")
 
     @classmethod
     def tearDownClass(cls):
