@@ -24,16 +24,18 @@ const context = { payload: { pull_request: pr }, repo: { owner: 'o', repo: 'r' }
 const github = { paginate: async () => [], rest: { pulls: { listFiles: null },
   issues: { addLabels: async () => ({}) }, repos: { getContent: async () => ({}) } } };
 // As actions/github-script v9 runs it: the script is the body of an async function whose parameters are the injected
-// names (README "This action"), so redeclaring one with const/let is a SyntaxError, as on a real runner.
+// names (dist/index.js callAsyncFunction), so redeclaring one with const/let is a SyntaxError, as on a real runner.
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 const fn = new AsyncFunction(%s, %s);
-fn(github, context, core, {}, {}, {}, () => { throw new Error('getOctokit stub'); }, require)
+fn(require, require, github, github, () => { throw new Error('getOctokit stub'); }, context, core, {}, {}, {})
   .then(() => console.log(JSON.stringify(core)), (e) => { console.error(e); process.exit(3); });
 """
 
-# Parameters actions/github-script@v9.0.0 passes to the script, in its documented order
-# (https://github.com/actions/github-script/blob/3a2844b7e9c422d3c10d287c895573f7108da1b3/README.md, "This action").
-INJECTED = ["github", "context", "core", "glob", "io", "exec", "getOctokit", "require"]
+# Parameters actions/github-script@v9.0.0 passes to the script, in its order: the object given to callAsyncFunction in
+# https://github.com/actions/github-script/blob/3a2844b7e9c422d3c10d287c895573f7108da1b3/dist/index.js (lines
+# 65100-65111). The README list ("This action") omits `octokit` and `__original_require__`: the code is the source.
+INJECTED = ["require", "__original_require__", "github", "octokit", "getOctokit", "context", "core", "exec", "glob",
+            "io"]
 
 
 def embedded_script():
