@@ -65,8 +65,16 @@ def step_bounds(lines, i):
 
 
 def unquote(value):
-    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
-        return value[1:-1]
+    """A one-line YAML scalar's value. Double quotes: escapes decoded (YAML 1.2.2 §5.7; JSON's escapes are a subset
+    and the rest, such as `\\x41`, go through Python's decoder); single quotes: `''` is one quote (§7.3.2)."""
+    if len(value) >= 2 and value[0] == value[-1] == '"':
+        inner = value[1:-1]
+        try:
+            return json.loads('"' + inner + '"')
+        except ValueError:
+            return inner.encode("latin-1", "backslashreplace").decode("unicode_escape")
+    if len(value) >= 2 and value[0] == value[-1] == "'":
+        return value[1:-1].replace("''", "'")
     return value
 
 
@@ -90,8 +98,9 @@ def read_script(lines, j):
         else:
             body.append("")
     text = "\n".join(body).rstrip("\n")
-    if block.group(1) == ">":
-        text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)  # folded: single newlines become spaces
+    # A folded block (`>`) keeps its line breaks here: folding could only join lines, and joining a line to a `//`
+    # comment would hide it from the compiler (YAML 1.2.2 §8.1.3 keeps breaks beside more-indented lines anyway).
+    # Compiling with the breaks kept never accepts a script the runner would reject.
     return text
 
 
@@ -157,7 +166,7 @@ class ExtractionTests(unittest.TestCase):
 
     def test_block_indicators_and_comment(self):
         for header in ("|-", "|+", "|2", "| # js", ">-"):
-            body = "core.info('a')" if not header.startswith(">") else "core.info('a') core.info('b')"
+            body = "core.info('a')" if not header.startswith(">") else "core.info('a')\ncore.info('b')"
             second = "" if not header.startswith(">") else "            core.info('b')\n"
             self.check(f"      - uses: actions/github-script@abc\n        with:\n          script: {header}\n"
                        f"            core.info('a')\n{second}", body)
@@ -167,6 +176,25 @@ class ExtractionTests(unittest.TestCase):
                    "core.info('a')")
         self.check("      - uses: \"actions/github-script@abc\"\n        with:\n"
                    "          script: \"core.info('a')\"\n", "core.info('a')")
+
+    def test_double_quoted_escapes_are_decoded(self):
+        # YAML decodes \n in a double-quoted scalar: the declaration is on its own line, not inside the comment.
+        self.check('      - uses: actions/github-script@abc\n        with:\n'
+                   '          script: "// note\\nconst glob = 1;"\n', "// note\nconst glob = 1;")
+        self.check("      - uses: actions/github-script@abc\n        with:\n"
+                   "          script: 'it''s'\n", "it's")
+
+    def test_folded_block_never_hides_a_line_in_a_comment(self):
+        found, _ = script_blocks("    steps:\n      - uses: actions/github-script@abc\n        with:\n"
+                                 "          script: >\n            // note\n              const glob = 1;\n", "t")
+        self.assertIn("\n", found[0]["script"].strip())
+
+    def test_decoded_redeclaration_fails_compilation(self):
+        if not NODE:
+            self.skipTest("node not installed")
+        found, _ = script_blocks('    steps:\n      - uses: actions/github-script@abc\n        with:\n'
+                                 '          script: "// note\\nconst glob = 1;"\n', "t")
+        self.assertEqual(compile_blocks(found).returncode, 1)
 
     def test_keys_before_uses(self):
         self.check("      - name: x\n        id: y\n        with:\n          github-token: t\n"
