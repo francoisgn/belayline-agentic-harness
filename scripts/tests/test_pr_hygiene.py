@@ -23,10 +23,17 @@ const pr = JSON.parse(process.env.TEST_PR);
 const context = { payload: { pull_request: pr }, repo: { owner: 'o', repo: 'r' } };
 const github = { paginate: async () => [], rest: { pulls: { listFiles: null },
   issues: { addLabels: async () => ({}) }, repos: { getContent: async () => ({}) } } };
-(async () => {
-%s
-})().then(() => console.log(JSON.stringify(core)), (e) => { console.error(e); process.exit(3); });
+// As actions/github-script v9 runs it: the script is the body of an async function whose parameters are the injected
+// names (README "This action"), so redeclaring one with const/let is a SyntaxError, as on a real runner.
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const fn = new AsyncFunction(%s, %s);
+fn(github, context, core, {}, {}, {}, () => { throw new Error('getOctokit stub'); }, require)
+  .then(() => console.log(JSON.stringify(core)), (e) => { console.error(e); process.exit(3); });
 """
+
+# Parameters actions/github-script@v9.0.0 passes to the script, in its documented order
+# (https://github.com/actions/github-script/blob/3a2844b7e9c422d3c10d287c895573f7108da1b3/README.md, "This action").
+INJECTED = ["github", "context", "core", "glob", "io", "exec", "getOctokit", "require"]
 
 
 def embedded_script():
@@ -52,7 +59,8 @@ class LedgerCheckTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.js = pathlib.Path(cls.tmp.name) / "run.js"
-        cls.js.write_text(HARNESS % embedded_script(), encoding="utf-8")
+        cls.js.write_text(HARNESS % (", ".join(json.dumps(n) for n in INJECTED), json.dumps(embedded_script())),
+                          encoding="utf-8")
 
     @classmethod
     def tearDownClass(cls):

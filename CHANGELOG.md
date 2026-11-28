@@ -5,6 +5,11 @@ moving to this version.
 
 ## Unreleased
 
+- **Fix: `pr-hygiene.yml` crashed on every run** (#157): its github-script v9 step redeclared the injected `glob`
+  (`SyntaxError: Identifier 'glob' has already been declared`), so no PR check ran. Helper renamed; a test now
+  compiles every `actions/github-script` block of the harness workflows with the injected parameters, and the
+  pr-hygiene tests run the script the way github-script does. **Action**: update the harness (`/harness-update`) to
+  the release that carries the fix.
 - **Forks report upstream** ([AGENTS.md](AGENTS.md), [CONTRIBUTING](CONTRIBUTING.md#working-in-a-fork), #154): a root
   `AGENTS.md` (and a `CLAUDE.md` importing it) asks agents working in a fork to open a "Fork change" issue here, with
   the owner's OK, when the fork changes a building block; a new issue form; triaged here from the title prefix.

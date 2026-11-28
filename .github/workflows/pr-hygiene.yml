@@ -89,7 +89,7 @@ jobs:
             const pr = context.payload.pull_request;
             if (!pr) { core.info('Not a PR: nothing to check.'); return; }
             const words = (s) => (s || '').split(/\s+/).filter(Boolean);
-            const glob = (p) => new RegExp('^' + p.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$');
+            const globToRegExp = (p) => new RegExp('^' + p.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$');
             const base = pr.base.ref, head = pr.head.ref;
             const errors = [];
 
@@ -103,7 +103,7 @@ jobs:
             if (process.env.FLOW && words(process.env.FLOW_BASES).includes(base)) {
               const ok = words(process.env.FLOW).some((pair) => {
                 const [b, h] = pair.split(':');
-                return b === base && glob(h || '').test(head);
+                return b === base && globToRegExp(h || '').test(head);
               });
               if (!ok) errors.push(`forbidden flow: ${head} → ${base} (allowed: ${process.env.FLOW})`);
             }
@@ -160,7 +160,7 @@ jobs:
                 }
               }
               // Doc impact (CONVENTIONS.md §Ledger): warn once, never fail
-              const codeGlobs = words(process.env.DOCS_CODE_PATHS).map(glob);
+              const codeGlobs = words(process.env.DOCS_CODE_PATHS).map(globToRegExp);
               if (codeGlobs.length) {
                 const where = ledgerLabel ? `the "${process.env.LEDGER_HEADING.trim()}" section` : 'the PR body';
                 const line = docsWhere.map((l) => l.match(/^\s*(?:[-*]\s+)?Docs:[ \t]*(.*)$/i)).find(Boolean);
