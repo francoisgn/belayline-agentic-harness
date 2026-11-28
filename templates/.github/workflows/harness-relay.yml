@@ -98,7 +98,7 @@ jobs:
     permissions:
       contents: read
       issues: write
-    uses: francoisgn/belayline-agentic-harness/.github/workflows/issue-hygiene.yml@v0.4.0
+    uses: francoisgn/belayline-agentic-harness/.github/workflows/issue-hygiene.yml@v0.5.0
     with:
       ref: ${{ needs.config.outputs.branch }}
 
@@ -112,7 +112,7 @@ jobs:
       issues: write
       pull-requests: read
       actions: read
-    uses: francoisgn/belayline-agentic-harness/.github/workflows/flow-report.yml@v0.4.0
+    uses: francoisgn/belayline-agentic-harness/.github/workflows/flow-report.yml@v0.5.0
     with:
       ref: ${{ needs.config.outputs.branch }}
 

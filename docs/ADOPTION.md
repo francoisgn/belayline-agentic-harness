@@ -41,7 +41,7 @@ to the session; on the Mac: `gh auth login && gh auth setup-git`).
    ```
 2. **Fetch the harness** at a tag, next to the project:
    ```bash
-   git clone --depth 1 --branch v0.4.0 https://github.com/francoisgn/belayline-agentic-harness.git ../belayline
+   git clone --depth 1 --branch v0.5.0 https://github.com/francoisgn/belayline-agentic-harness.git ../belayline
    ```
 3. **Look before writing**, then apply:
    ```bash
