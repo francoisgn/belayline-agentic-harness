@@ -5,6 +5,12 @@ moving to this version.
 
 ## Unreleased
 
+## 0.5.0 — 2026-11-28
+
+Carries the fix of `pr-hygiene.yml`, which failed on every run since its pin moved to `actions/github-script` v9
+(#157): every project that calls it should update. The other changes need no action; the optional `rules` job is
+off until a project enables it.
+
 - **Fix: `pr-hygiene.yml` crashed on every run** (#157): its github-script v9 step redeclared the injected `glob`
   (`SyntaxError: Identifier 'glob' has already been declared`), so no PR check ran. Helper renamed; a test now
   compiles every `actions/github-script` block of the harness workflows with the injected parameters, and the

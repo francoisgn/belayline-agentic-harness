@@ -72,7 +72,7 @@ the maintainer to confirm, not a legal qualification.
 **Adoption** (cloud session with `ezzz/HFRnow` and `francoisgn/belayline-agentic-harness` attached, or Mac):
 ```bash
 git fetch origin && git switch -c chore/adoption-harness origin/dev-swift
-git clone --depth 1 --branch v0.4.0 https://github.com/francoisgn/belayline-agentic-harness.git ../belayline
+git clone --depth 1 --branch v0.5.0 https://github.com/francoisgn/belayline-agentic-harness.git ../belayline
 ../belayline/scripts/harness-sync.sh --target . --dry-run && ../belayline/scripts/harness-sync.sh --target .
 ```
 
