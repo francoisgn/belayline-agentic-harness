@@ -23,7 +23,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 DIRS = [ROOT / ".github", ROOT / "templates" / ".github"]
 NODE = shutil.which("node")
 # `uses: actions/github-script@…`, optionally after the step's `- `, optionally quoted.
-USES = re.compile(r"""^(\s*)(-\s+)?uses:\s*["']?actions/github-script@""")
+USES = re.compile(r"""^(\s*)(-\s+)?uses:\s*["']?actions/github-script@""", re.IGNORECASE)
+# Independent count of github-script references (any form, any case, comments excluded), so a step the extractor's
+# pattern does not recognise still shows up as a mismatch.
+ANY_REF = re.compile(r"actions/github-script@", re.IGNORECASE)
 STEP_START = re.compile(r"^(\s*)-\s")
 SCRIPT = re.compile(r"""^(\s*)script:\s*(.*?)\s*$""")
 BLOCK = re.compile(r"^([|>])([+-]?)([1-9]?)([+-]?)\s*(#.*)?$")
@@ -186,15 +189,21 @@ class GithubScriptBlocksTests(unittest.TestCase):
     def test_every_github_script_step_is_extracted(self):
         found, missing = all_blocks()
         self.assertEqual(missing, [])
-        uses = sum(len([ln for ln in f.read_text(encoding="utf-8").splitlines() if USES.match(ln)])
-                   for d in DIRS for f in d.rglob("*") if f.suffix in (".yml", ".yaml"))
-        self.assertEqual(len(found), uses)
+        refs = sum(len(ANY_REF.findall(ln.split("#", 1)[0] if not ln.lstrip().startswith("#") else ""))
+                   for d in DIRS for f in d.rglob("*") if f.suffix in (".yml", ".yaml")
+                   for ln in f.read_text(encoding="utf-8").splitlines())
+        self.assertEqual(len(found), refs)
         self.assertTrue(any("pr-hygiene.yml" in b["where"] for b in found), [b["where"] for b in found])
 
     def test_every_block_compiles_with_the_injected_parameters(self):
         found, _ = all_blocks()
         run = compile_blocks(found)
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+    def test_injected_names_match_github_script_v9(self):
+        # dist/index.js 65100-65111 at 3a2844b; a name dropped from INJECTED would no longer be checked.
+        self.assertEqual(sorted(INJECTED), sorted(["require", "__original_require__", "github", "octokit", "getOctokit",
+                                                    "context", "core", "exec", "glob", "io"]))
 
     def test_a_redeclared_injected_name_is_caught(self):
         for name in INJECTED:
