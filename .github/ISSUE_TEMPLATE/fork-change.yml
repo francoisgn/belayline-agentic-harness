@@ -19,7 +19,7 @@ body:
     id: change
     attributes:
       label: What your fork changed
-      description: The files or building blocks touched, with a link to the commit, diff or branch in your fork.
+      description: The files or building blocks touched; a link to the commit if your fork is public, else a short diff excerpt.
     validations:
       required: true
   - type: textarea

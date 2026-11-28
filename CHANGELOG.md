@@ -7,7 +7,7 @@ moving to this version.
 
 - **Forks report upstream** ([AGENTS.md](AGENTS.md), [CONTRIBUTING](CONTRIBUTING.md#working-in-a-fork), #154): a root
   `AGENTS.md` (and a `CLAUDE.md` importing it) asks agents working in a fork to open a "Fork change" issue here, with
-  the owner's OK, when the fork changes a building block; a new issue form; triaged here with `/feedback-triage`.
+  the owner's OK, when the fork changes a building block; a new issue form; triaged here from the title prefix.
   Not vendored: adopting projects are unchanged. **Action**: none.
 - **Rule checker in CI, optional** ([`rules-check.yml`](.github/workflows/rules-check.yml),
   [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [POSITIONING §3](docs/POSITIONING.md), #150):

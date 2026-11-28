@@ -20,6 +20,8 @@ A contribution that adds a rule also says how to disable it.
 Changed Belayline in your fork? Open a **Fork change** issue here with the intent, the change and the failure it
 answers, even if you do not plan a PR: it is triaged here and may come back upstream. Coding agents in a fork do it
 for you, with your OK: see [AGENTS.md](AGENTS.md) › Working in a fork.
+Maintainers triage them from `is:issue is:open "Fork change:" in:title`, labelled as `/feedback-triage` does
+(issues opened with `gh` by someone without rights here arrive unlabelled).
 
 ## What a PR keeps true
 
