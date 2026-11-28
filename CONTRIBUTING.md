@@ -15,6 +15,12 @@ A contribution that adds a rule also says how to disable it.
    Nothing runs in CI on a draft. The body carries a `Docs:` line: the doc files the change makes untrue, or
    `Docs: none (<reason>)` (`docs/CONVENTIONS.md` §Ledger).
 
+## Working in a fork
+
+Changed Belayline in your fork? Open a **Fork change** issue here with the intent, the change and the failure it
+answers, even if you do not plan a PR: it is triaged here and may come back upstream. Coding agents in a fork do it
+for you, with your OK: see [AGENTS.md](AGENTS.md) › Working in a fork.
+
 ## What a PR keeps true
 
 | You touch | Update in the same PR |

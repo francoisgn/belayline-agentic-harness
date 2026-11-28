@@ -1,0 +1,36 @@
+name: Fork change
+description: Propose upstream a change you made to Belayline in your fork (AGENTS.md › Working in a fork)
+title: "Fork change: "
+labels: ["type: feature", "status: needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting back. One issue per intent; search open and closed issues first. Keep it public-safe: no
+        secret, no name of a person, a client or a private project.
+  - type: textarea
+    id: intent
+    attributes:
+      label: Intent
+      description: What should change in Belayline, and why. One or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What your fork changed
+      description: The files or building blocks touched, with a link to the commit, diff or branch in your fork.
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: The failure it answers
+      description: What went wrong in a real project without the change (no client or company name).
+    validations:
+      required: true
+  - type: textarea
+    id: off
+    attributes:
+      label: How a project would switch it off
+      description: Every building block can be kept, replaced or switched off (CONTRIBUTING.md).
