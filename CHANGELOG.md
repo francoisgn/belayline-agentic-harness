@@ -5,6 +5,9 @@ moving to this version.
 
 ## Unreleased
 
+- **The cache at API prices** ([FINOPS](docs/FINOPS.md) §1): one intensive day of Claude Code billed per token
+  (anonymised): cache writes 45 % of the cost, cache reads 43 %, output 12 %, about $250; 95 % of the tokens were
+  re-reads; with a 5-minute cache each longer pause rewrites the context. **Action**: none.
 - **Rule checker in CI, optional** ([`rules-check.yml`](.github/workflows/rules-check.yml),
   [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [POSITIONING §3](docs/POSITIONING.md), #150):
   a project that writes its mechanical rules in `stele.md` gets them checked on each PR by
