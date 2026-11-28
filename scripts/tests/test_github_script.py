@@ -64,15 +64,45 @@ def step_bounds(lines, i):
     return start, end
 
 
+# YAML 1.2.2 §5.7 escape sequences of a double-quoted scalar (https://yaml.org/spec/1.2.2/#57-escaped-characters).
+YAML_ESCAPES = {"0": "\x00", "a": "\x07", "b": "\x08", "t": "\t", "\t": "\t", "n": "\n", "v": "\x0b", "f": "\x0c",
+                "r": "\r", "e": "\x1b", " ": " ", '"': '"', "/": "/", "\\": "\\", "N": "\x85", "_": "\xa0",
+                "L": "\u2028", "P": "\u2029"}
+YAML_HEX = {"x": 2, "u": 4, "U": 8}
+
+
+def decode_double_quoted(inner):
+    """The value of a one-line double-quoted scalar, or None on an escape YAML does not define (reported as a step
+    whose script could not be extracted, never compiled half-decoded)."""
+    out, i = [], 0
+    while i < len(inner):
+        c = inner[i]
+        if c != "\\":
+            out.append(c)
+            i += 1
+            continue
+        if i + 1 >= len(inner):
+            return None
+        e = inner[i + 1]
+        if e in YAML_ESCAPES:
+            out.append(YAML_ESCAPES[e])
+            i += 2
+        elif e in YAML_HEX:
+            digits = inner[i + 2:i + 2 + YAML_HEX[e]]
+            if len(digits) != YAML_HEX[e] or not all(d in "0123456789abcdefABCDEF" for d in digits):
+                return None
+            out.append(chr(int(digits, 16)))
+            i += 2 + YAML_HEX[e]
+        else:
+            return None
+    return "".join(out)
+
+
 def unquote(value):
-    """A one-line YAML scalar's value. Double quotes: escapes decoded (YAML 1.2.2 §5.7; JSON's escapes are a subset
-    and the rest, such as `\\x41`, go through Python's decoder); single quotes: `''` is one quote (§7.3.2)."""
+    """A one-line YAML scalar's value: double quotes decoded per §5.7, single quotes with `''` as one quote (§7.3.2);
+    None when the value cannot be decoded."""
     if len(value) >= 2 and value[0] == value[-1] == '"':
-        inner = value[1:-1]
-        try:
-            return json.loads('"' + inner + '"')
-        except ValueError:
-            return inner.encode("latin-1", "backslashreplace").decode("unicode_escape")
+        return decode_double_quoted(value[1:-1])
     if len(value) >= 2 and value[0] == value[-1] == "'":
         return value[1:-1].replace("''", "'")
     return value
@@ -224,6 +254,23 @@ class ExtractionTests(unittest.TestCase):
 
     def test_folded_blank_lines_and_more_indented_keep_breaks(self):
         self.assertEqual(fold(["a", "b", "", "c", "  d", "e"]), "a b\nc\n  d\ne")
+
+    def test_every_yaml_escape_is_decoded(self):
+        self.assertEqual(decode_double_quoted("a\\Lb\\Pc\\N\\_\\x41\\u00e9\\U0001F600\\t\\\\\\\""),
+                         "a\u2028b\u2029c\x85\xa0A\u00e9\U0001F600\t\\\"")
+
+    def test_line_separator_escape_ends_the_comment(self):
+        # \L is U+2028, a JavaScript line terminator: the declaration is outside the comment and must fail.
+        found, missing = script_blocks('    steps:\n      - uses: actions/github-script@abc\n        with:\n'
+                                       '          script: "// note\\Lconst glob = 1;"\n', "t")
+        self.assertEqual((missing, found[0]["script"]), ([], "// note\u2028const glob = 1;"))
+        if NODE:
+            self.assertEqual(compile_blocks(found).returncode, 1)
+
+    def test_unknown_escape_is_reported_not_compiled(self):
+        found, missing = script_blocks('    steps:\n      - uses: actions/github-script@abc\n        with:\n'
+                                       '          script: "a\\qb"\n', "t")
+        self.assertEqual((found, missing), ([], ["t:2"]))
 
     def test_decoded_redeclaration_fails_compilation(self):
         if not NODE:
