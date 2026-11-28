@@ -97,11 +97,36 @@ def read_script(lines, j):
             body.append(cur[content_indent:])
         else:
             body.append("")
-    text = "\n".join(body).rstrip("\n")
-    # A folded block (`>`) keeps its line breaks here: folding could only join lines, and joining a line to a `//`
-    # comment would hide it from the compiler (YAML 1.2.2 §8.1.3 keeps breaks beside more-indented lines anyway).
-    # Compiling with the breaks kept never accepts a script the runner would reject.
-    return text
+    while body and body[-1] == "":
+        body.pop()
+    if block.group(1) == ">":
+        return fold(body)
+    return "\n".join(body)
+
+
+def fold(lines):
+    """YAML folding of a `>` block whose lines are already de-indented (YAML 1.2.2 §8.1.3, §6.5): a single break
+    between two non-empty lines at the content indentation becomes a space; n empty lines between them become n
+    breaks; a break next to a more-indented line (or an empty one) is kept."""
+    out = ""
+    prev = None  # previous non-empty line
+    blanks = 0
+    for line in lines:
+        if line == "":
+            blanks += 1
+            continue
+        if prev is None:
+            out = "\n" * blanks + line
+        else:
+            spaced = line.startswith((" ", "\t")) or prev.startswith((" ", "\t"))
+            if spaced:
+                out += "\n" * (blanks + 1) + line
+            elif blanks:
+                out += "\n" * blanks + line
+            else:
+                out += " " + line
+        prev, blanks = line, 0
+    return out
 
 
 def script_blocks(text, where):
@@ -166,7 +191,7 @@ class ExtractionTests(unittest.TestCase):
 
     def test_block_indicators_and_comment(self):
         for header in ("|-", "|+", "|2", "| # js", ">-"):
-            body = "core.info('a')" if not header.startswith(">") else "core.info('a')\ncore.info('b')"
+            body = "core.info('a')" if not header.startswith(">") else "core.info('a') core.info('b')"
             second = "" if not header.startswith(">") else "            core.info('b')\n"
             self.check(f"      - uses: actions/github-script@abc\n        with:\n          script: {header}\n"
                        f"            core.info('a')\n{second}", body)
@@ -188,6 +213,17 @@ class ExtractionTests(unittest.TestCase):
         found, _ = script_blocks("    steps:\n      - uses: actions/github-script@abc\n        with:\n"
                                  "          script: >\n            // note\n              const glob = 1;\n", "t")
         self.assertIn("\n", found[0]["script"].strip())
+
+    def test_folded_same_indent_lines_are_joined(self):
+        # YAML folds these into `const x = 1 const y = 2;`, which the runner rejects: so must the test.
+        found, _ = script_blocks("    steps:\n      - uses: actions/github-script@abc\n        with:\n"
+                                 "          script: >\n            const x = 1\n            const y = 2;\n", "t")
+        self.assertEqual(found[0]["script"], "const x = 1 const y = 2;")
+        if NODE:
+            self.assertEqual(compile_blocks(found).returncode, 1)
+
+    def test_folded_blank_lines_and_more_indented_keep_breaks(self):
+        self.assertEqual(fold(["a", "b", "", "c", "  d", "e"]), "a b\nc\n  d\ne")
 
     def test_decoded_redeclaration_fails_compilation(self):
         if not NODE:
