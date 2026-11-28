@@ -45,6 +45,26 @@ flowchart LR
     its own container only, its child sessions are not counted), and **0.3–5.4 %** for the Mac orchestrator, whose
     waits mostly end before its 1-hour cache does (1 miss in 324 waits of 5 to 60 minutes). On the Mac,
     **subagents are 73 % of usage** for the orchestrator and 81 % for the other project, the larger line (#147).
+  - **Measured at API prices** (a pay-per-token account the operator uses, billing anonymised; one intensive day of
+    Claude Code in November 2026, Opus 5.5, a long session with subagents, billed per token outside a subscription,
+    with Claude Code's 5-minute cache): cache writes **45 %** of the cost (22.5 M tokens), cache reads **43 %** (531 M tokens), output
+    12 % (1.46 M), uncached input under 1 %; about **$250 for the day**. 95 % of the tokens were re-reads: each turn
+    re-reads the context, and with a 5-minute cache each longer pause (a CI run, a background task) rewrites it at
+    the write price. How much of the 45 % came from pauses was not measured (the billing has no timestamps). The
+    unit prices billed were Anthropic's list prices: the gap with a subscription is paying per token, not the
+    channel.
+  - **The same split in both regimes**, so the lever is the same: cache writes 45 % and reads 43 % per token
+    (5-minute cache), against 41 % and 44 % on the Mac orchestrator's subscription (1-hour main cache, same API-price
+    weights). What differs is who writes: on the subscription, mostly subagents' first writes; per token, an
+    unknown share of rebuilds after pauses.
+  - **Would a 1-hour cache pay off per token?** *Estimate.* A 1-hour cache write costs 2 times the input price,
+    against 1.25 times for 5 minutes ($8 against $5 per million on Opus 5.5). It saves money only if more than
+    about **37.5 to 40 %** of the writes are rebuilds after a pause of 5 to 60 minutes (break-even 1 − 1.25/2 on writes
+    alone, a little higher once the reads that follow a rebuild are counted). On that day,
+    from no such rebuild to 80 % of them, the day would cost from about 27 % more to about 31 % less. For scale, the
+    Mac orchestrator had 324 pauses of 5 to 60 minutes in 14 days (#146), about 8 M tokens a day of rewrites at a
+    ~360k context, roughly 36 % of that day's 22.5 M writes: close to break-even. Shorter sessions and resuming from
+    a written state remain the safe lever.
   - **Not measured here**, cited from [inevolin/claude-code-usage-analysis](https://github.com/inevolin/claude-code-usage-analysis)
     (read 2026-11-18; Opus 5.5, API key with a 5-minute cache, a ~97k-token session, n=2 to 5 per arm): the same
     small fix cost about 1.5 times a fresh session with the cache warm and about 10 times after it expired; a fresh

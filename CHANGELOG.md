@@ -9,6 +9,9 @@ moving to this version.
   `AGENTS.md` (and a `CLAUDE.md` importing it) asks agents working in a fork to open a "Fork change" issue here, with
   the owner's OK, when the fork changes a building block; a new issue form; triaged here from the title prefix.
   Not vendored: adopting projects are unchanged. **Action**: none.
+- **The cache at API prices** ([FINOPS](docs/FINOPS.md) §1): one intensive day of Claude Code billed per token
+  (anonymised): cache writes 45 % of the cost, cache reads 43 %, output 12 %, about $250; 95 % of the tokens were
+  re-reads; with a 5-minute cache each longer pause rewrites the context. **Action**: none.
 - **Rule checker in CI, optional** ([`rules-check.yml`](.github/workflows/rules-check.yml),
   [ADOPTION](docs/ADOPTION.md#plugging-a-step-before-or-after-the-loop), [POSITIONING §3](docs/POSITIONING.md), #150):
   a project that writes its mechanical rules in `stele.md` gets them checked on each PR by
